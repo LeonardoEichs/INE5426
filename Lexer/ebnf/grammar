@@ -1,17 +1,18 @@
-Grammar  ::= Function*
-Function ::= Declaration '(' Parameters ')' '{' Command* '}'
-Type ::= int | string | void | boolean | double
-Identifier ::= [a-z]+[a-zA-Z0-9_]*  
+Grammar  ::= Function* /*| (Declaration ('=' Expression)?)*/
+Function ::= Type Identifier ('[' ']')* '(' Parameters ')' '{' Command* '}'
+Type ::= int | string | void | boolean | double | object
+Identifier ::= [a-z]+[a-zA-Z0-9_]*
 Parameters ::= ((Declaration ',')*Declaration)?
-
-SimpleCommand := (Expression | Declaration '=' Expression | Declaration | Identifier '=' Expression)
+SimpleCommand ::= (Expression | Declaration '=' Expression | Declaration | Identifier '=' Expression)
 Command ::= SimpleCommand ';' | While | If | For | (break | return | print) ';'
-Declaration ::= Type Identifier ('[' [0-9]+ ']')*
-Expression ::= Unary Expression | FunctionCall | Expression Binary Expression | '('Expression')' | Value | Identifier ('[' [0-9]+ ']')*
+Declaration ::= Type Identifier ('[' [0-9] ']')*
+Expression ::= Unary Expression | FunctionCall | Expression Binary Expression | '('Expression')' | Value | Identifier ('[' [0-9]+ ']')* ('.' (Identifier ('[' [0-9]+ ']')*))*
 
-Number ::= Number ::= [0-9]+ | [0-9]+ '.' [0-9]* | '.' [0-9]+
-Value ::= Number | true | false | StringLiteral | Array
+Number ::= [0-9]+ | [0-9]+ '.' [0-9]* | '.' [0-9]+
+Value ::= Number | true | false | StringLiteral | Array | Object
 Array ::= '[' ((Value ',')* Value)? ']'
+ObjectElement ::= Declaration ':' Expression
+Object ::= '{' ((ObjectElement ',')* ObjectElement)? '}'
 
 Unary ::= '!' | Signal
 Binary ::= Signal | '*' | '/' | '%' | '>' | '<' | '>=' | '<=' | '==' | '!=' | '&&' | '||'
@@ -21,15 +22,14 @@ FunctionCall ::= Identifier '('Arguments')'
 Arguments ::= ((Expression ',')*Expression)?
 
 Whitespace ::= S | Comment
-S    	::= ' ' | '\r' | '\n' | '\t'
+S        ::= ' ' | '\r' | '\n' | '\t'
 Comment  ::= '/*' ( [^*] | '*'+ [^*/] )* '*'* '*/' | '/' '/' .* '\n'
 
-StringLiteral ::= '"' (.-('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"'
+StringLiteral ::= '"' (.-('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\' | 'n' | 'r' | 't'))* '"'
 
 While ::= 'while' '(' Expression ')' '{' Command* '}'
 For ::= 'for' '(' SimpleCommand? ';' Expression? ';' SimpleCommand? ')' '{' Command* '}'
 Switch ::= 'switch' '(' Identifier ('[' [0-9]+ ']')* ')' '{' Case* Default Case* '}'
 Case ::= 'case' '(' Expression ')' '{' Command* '}'
 Default ::= 'default' '{' Command* '}'
-
 If ::= 'if' '(' Expression ')' '{' Command* '}' ( 'else' '{' Command* '}')?
