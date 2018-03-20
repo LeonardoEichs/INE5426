@@ -6,7 +6,7 @@ void main() {
 	string Wrong = "Upper case";
 	int b = 20;
 	for (; b > 0; b = b-1 ) {
-		print "a\nb"
+		print ("a\nb");
 	}
 
 }

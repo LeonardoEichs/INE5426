@@ -9,11 +9,11 @@ void main() {
 	int b = 10;
 	while (a > 3) {
 		if (a / 2 != 6) {
-			print a;
+			print (a);
 		} else if (a == 10) {
-			print "dez";
+			print ("dez");
 		} else {
-			print "default";
+			print ("default)";
 		}
 	}
 	

@@ -4,7 +4,7 @@ void main() {
 
 		switch (a) {
 			case 2 {
-				print "Dois";
+				print("Dois");
 
 			}
 			case 10 {
@@ -14,7 +14,7 @@ void main() {
 
 			}
 			default {
-				print a % b;
+				print (a % b);
 			}
 		}
 }
