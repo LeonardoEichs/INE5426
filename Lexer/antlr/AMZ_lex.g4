@@ -45,7 +45,6 @@ IF : 'if' ;
 ELSE : 'else' ;
 BREAK : 'break' ;
 RETURN : 'return' ;
-PRINT : 'print' ;
 
 // Types
 INT : 'int' ;

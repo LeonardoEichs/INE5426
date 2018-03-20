@@ -4,7 +4,7 @@ Type ::= int | string | void | boolean | double | object
 Identifier ::= [a-z]+[a-zA-Z0-9_]*
 Parameters ::= ((Declaration ',')*Declaration)?
 SimpleCommand ::= (Expression | Declaration '=' Expression | Declaration | Identifier '=' Expression)
-Command ::= SimpleCommand ';' | While | If | For | (break | return | print) ';'
+Command ::= SimpleCommand ';' | While | If | For | (break | return) ';'
 Declaration ::= Type Identifier ('[' [0-9] ']')*
 Expression ::= Unary Expression | FunctionCall | Expression Binary Expression | '('Expression')' | Value | Identifier ('[' [0-9]+ ']')* ('.' (Identifier ('[' [0-9]+ ']')*))*
 
