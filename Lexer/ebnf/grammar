@@ -32,4 +32,4 @@ For ::= 'for' '(' SimpleCommand? ';' Expression? ';' SimpleCommand? ')' '{' Comm
 Switch ::= 'switch' '(' Identifier ('[' [0-9]+ ']')* ')' '{' Case* Default Case* '}'
 Case ::= 'case' '(' Expression ')' '{' Command* '}'
 Default ::= 'default' '{' Command* '}'
-If ::= 'if' '(' Expression ')' '{' Command* '}' ( 'else' '{' Command* '}')?
+If ::= 'if' '(' Expression ')' '{' Command* '}' ('else' 'if' '(' Expression ')' '{' Command* '}')* ( 'else' '{' Command* '}')?
