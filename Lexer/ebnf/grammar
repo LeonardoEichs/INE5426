@@ -10,7 +10,7 @@ Expression ::= Unary Expression | FunctionCall | Expression Binary Expression | 
 
 Number ::= [0-9]+ | [0-9]+ '.' [0-9]* | '.' [0-9]+
 Value ::= Number | true | false | StringLiteral | Array | Object
-Array ::= '[' ((Value ',')* Value)? ']'
+Array ::= '[' ((Expression ',')* Expression)? ']'
 ObjectElement ::= Declaration ':' Expression
 Object ::= '{' ((ObjectElement ',')* ObjectElement)? '}'
 
