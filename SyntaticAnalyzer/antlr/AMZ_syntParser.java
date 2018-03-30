@@ -1,4 +1,4 @@
-// Generated from SyntaticAnalyzer.g4 by ANTLR 4.7.1
+// Generated from AMZ_synt.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class SyntaticAnalyzerParser extends Parser {
+public class AMZ_syntParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -80,7 +80,7 @@ public class SyntaticAnalyzerParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "SyntaticAnalyzer.g4"; }
+	public String getGrammarFileName() { return "AMZ_synt.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -91,28 +91,28 @@ public class SyntaticAnalyzerParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public SyntaticAnalyzerParser(TokenStream input) {
+	public AMZ_syntParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class TypeContext extends ParserRuleContext {
-		public TerminalNode INT() { return getToken(SyntaticAnalyzerParser.INT, 0); }
-		public TerminalNode BOOLEAN() { return getToken(SyntaticAnalyzerParser.BOOLEAN, 0); }
-		public TerminalNode STRING() { return getToken(SyntaticAnalyzerParser.STRING, 0); }
-		public TerminalNode DOUBLE() { return getToken(SyntaticAnalyzerParser.DOUBLE, 0); }
-		public TerminalNode VOID() { return getToken(SyntaticAnalyzerParser.VOID, 0); }
-		public TerminalNode OBJECT() { return getToken(SyntaticAnalyzerParser.OBJECT, 0); }
+		public TerminalNode INT() { return getToken(AMZ_syntParser.INT, 0); }
+		public TerminalNode BOOLEAN() { return getToken(AMZ_syntParser.BOOLEAN, 0); }
+		public TerminalNode STRING() { return getToken(AMZ_syntParser.STRING, 0); }
+		public TerminalNode DOUBLE() { return getToken(AMZ_syntParser.DOUBLE, 0); }
+		public TerminalNode VOID() { return getToken(AMZ_syntParser.VOID, 0); }
+		public TerminalNode OBJECT() { return getToken(AMZ_syntParser.OBJECT, 0); }
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SyntaticAnalyzerListener ) ((SyntaticAnalyzerListener)listener).enterType(this);
+			if ( listener instanceof AMZ_syntListener ) ((AMZ_syntListener)listener).enterType(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SyntaticAnalyzerListener ) ((SyntaticAnalyzerListener)listener).exitType(this);
+			if ( listener instanceof AMZ_syntListener ) ((AMZ_syntListener)listener).exitType(this);
 		}
 	}
 
@@ -150,18 +150,18 @@ public class SyntaticAnalyzerParser extends Parser {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
-		public TerminalNode ID() { return getToken(SyntaticAnalyzerParser.ID, 0); }
-		public List<TerminalNode> LSQUARE() { return getTokens(SyntaticAnalyzerParser.LSQUARE); }
+		public TerminalNode ID() { return getToken(AMZ_syntParser.ID, 0); }
+		public List<TerminalNode> LSQUARE() { return getTokens(AMZ_syntParser.LSQUARE); }
 		public TerminalNode LSQUARE(int i) {
-			return getToken(SyntaticAnalyzerParser.LSQUARE, i);
+			return getToken(AMZ_syntParser.LSQUARE, i);
 		}
-		public List<TerminalNode> NUMBER() { return getTokens(SyntaticAnalyzerParser.NUMBER); }
+		public List<TerminalNode> NUMBER() { return getTokens(AMZ_syntParser.NUMBER); }
 		public TerminalNode NUMBER(int i) {
-			return getToken(SyntaticAnalyzerParser.NUMBER, i);
+			return getToken(AMZ_syntParser.NUMBER, i);
 		}
-		public List<TerminalNode> RSQUARE() { return getTokens(SyntaticAnalyzerParser.RSQUARE); }
+		public List<TerminalNode> RSQUARE() { return getTokens(AMZ_syntParser.RSQUARE); }
 		public TerminalNode RSQUARE(int i) {
-			return getToken(SyntaticAnalyzerParser.RSQUARE, i);
+			return getToken(AMZ_syntParser.RSQUARE, i);
 		}
 		public DeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -169,11 +169,11 @@ public class SyntaticAnalyzerParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_declaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof SyntaticAnalyzerListener ) ((SyntaticAnalyzerListener)listener).enterDeclaration(this);
+			if ( listener instanceof AMZ_syntListener ) ((AMZ_syntListener)listener).enterDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof SyntaticAnalyzerListener ) ((SyntaticAnalyzerListener)listener).exitDeclaration(this);
+			if ( listener instanceof AMZ_syntListener ) ((AMZ_syntListener)listener).exitDeclaration(this);
 		}
 	}
 
