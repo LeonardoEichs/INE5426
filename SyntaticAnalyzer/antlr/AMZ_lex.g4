@@ -32,6 +32,7 @@ LPAREN : '(';
 RPAREN : ')' ;
 EQUALS : '=' ;
 SEMICO : ';' ;
+COLON : ':' ;
 DOT : '.';
 COMMA : ',';
 
@@ -48,12 +49,12 @@ RETURN : 'return' ;
 
 // Types
 INT : 'int' ;
-BOOLEAN : 'boolean' ;
+BOOLEAN : 'boolean' | 'bool' ;
 STRING : 'string' ;
 DOUBLE : 'double' ;
 VOID : 'void' ;
 OBJECT: 'object';
-TYPE : ( INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT ) ;
+/* TYPE : ( INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT ) ; */
 
 
 // Skip spaces, tabs, newline, comments

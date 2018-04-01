@@ -3,10 +3,10 @@ Function ::= Type Identifier ('[' ']')* '(' Parameters ')' '{' Command* '}'
 Type ::= int | string | void | boolean | double | object
 Identifier ::= [a-z]+[a-zA-Z0-9_]*
 Parameters ::= ((Declaration ',')*Declaration)?
-SimpleCommand ::= (Expression | Declaration '=' Expression | Declaration | Identifier '=' Expression)
-Command ::= SimpleCommand ';' | While | If | For | (break | return) ';'
+SimpleCommand ::= (Expression | Declaration '=' Expression | Declaration | Identifier ('[' [0-9]+ ']')* /*('.' (Identifier ('[' [0-9]+ ']')*))* */ '=' Expression)
+Command ::= SimpleCommand ';' | While | If | For | Switch | (break | return Expression) ';'
 Declaration ::= Type Identifier ('[' [0-9] ']')*
-Expression ::= Unary Expression | FunctionCall | Expression Binary Expression | '('Expression')' | Value | Identifier ('[' [0-9]+ ']')* ('.' (Identifier ('[' [0-9]+ ']')*))*
+Expression ::= Unary Expression | Expression Binary Expression | '('Expression')' | (Value | Identifier | FunctionCall) ('[' [0-9]+ ']')* ('.' (Identifier ('[' [0-9]+ ']')*))*
 
 Number ::= [0-9]+ | [0-9]+ '.' [0-9]* | '.' [0-9]+
 Value ::= Number | true | false | StringLiteral | Array | Object
