@@ -17,6 +17,16 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 */
 	void exitEval(AMZ_syntParser.EvalContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#import_file}.
+	 * @param ctx the parse tree
+	 */
+	void enterImport_file(AMZ_syntParser.Import_fileContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#import_file}.
+	 * @param ctx the parse tree
+	 */
+	void exitImport_file(AMZ_syntParser.Import_fileContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#declaration}.
 	 * @param ctx the parse tree
 	 */
@@ -276,6 +286,26 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSwitch_block(AMZ_syntParser.Switch_blockContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#case_block}.
+	 * @param ctx the parse tree
+	 */
+	void enterCase_block(AMZ_syntParser.Case_blockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#case_block}.
+	 * @param ctx the parse tree
+	 */
+	void exitCase_block(AMZ_syntParser.Case_blockContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#default_block}.
+	 * @param ctx the parse tree
+	 */
+	void enterDefault_block(AMZ_syntParser.Default_blockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#default_block}.
+	 * @param ctx the parse tree
+	 */
+	void exitDefault_block(AMZ_syntParser.Default_blockContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#function_block}.
 	 * @param ctx the parse tree

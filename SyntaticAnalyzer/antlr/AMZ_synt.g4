@@ -5,8 +5,8 @@ import AMZ_lex;
 /*
  * ROOT:
  */
- /* TODO import file */
-eval : /* import_file* */ function_block* ;
+eval : import_file* function_block* ;
+import_file: IMPORT STRING_LITERAL SEMICO ;
 
 /*
  * COMMON:
@@ -57,16 +57,11 @@ array_literal : LSQUARE (expression (COMMA expression)*)? RSQUARE;
  */
 
 command : simple_command SEMICO | block_command ;
-/*
- * TODO QUESTION
- * can we set a value inside an object? E.g.: obj.val = 1
- * if so, then change "id_optional_array" by "id_optional_array (DOT id_optional_array)*" in simple_command
- */
 simple_command :
   expression |
   declaration EQUALS expression |
   declaration |
-  id_optional_array EQUALS expression |
+  id_optional_array (DOT id_optional_array)* EQUALS expression |
   BREAK |
   RETURN expression? ;
 block_command : while_block | if_block | for_block | switch_block;
@@ -80,9 +75,10 @@ if_block : IF LPAREN expression RPAREN command_block
   (ELSE IF LPAREN expression RPAREN command_block)*
   (ELSE command_block)? ;
 
-/* TODO switch, case and default*/
-/* QUESTION can parameter be an expression? */
-switch_block : SWITCH ;
+switch_block : SWITCH LPAREN id_optional_array (DOT id_optional_array)* RPAREN
+  LCURLY case_block* default_block case_block* RCURLY;
+case_block : CASE LPAREN expression RPAREN command_block;
+default_block : DEFAULT command_block;
 
 function_block : declaration LPAREN parameters RPAREN command_block ;
 parameters : (declaration (COMMA declaration)*)? ;

@@ -1,4 +1,5 @@
-Grammar  ::= Function* /*| (Declaration ('=' Expression)?)*/
+Grammar  ::= Import* Function*
+Import ::= '#import' StringLiteral ';'
 Function ::= Type Identifier ('[' ']')* '(' Parameters ')' '{' Command* '}'
 Type ::= int | string | void | boolean | double | object
 Identifier ::= [a-z]+[a-zA-Z0-9_]*

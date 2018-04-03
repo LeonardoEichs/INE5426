@@ -37,6 +37,7 @@ DOT : '.';
 COMMA : ',';
 
 // Reserved words
+IMPORT : '#import' ;
 WHILE : 'while' ;
 FOR : 'for' ;
 SWITCH : 'switch' ;

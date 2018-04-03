@@ -27,6 +27,18 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterImport_file(AMZ_syntParser.Import_fileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImport_file(AMZ_syntParser.Import_fileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDeclaration(AMZ_syntParser.DeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -334,6 +346,30 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSwitch_block(AMZ_syntParser.Switch_blockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCase_block(AMZ_syntParser.Case_blockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCase_block(AMZ_syntParser.Case_blockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDefault_block(AMZ_syntParser.Default_blockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDefault_block(AMZ_syntParser.Default_blockContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
