@@ -75,7 +75,7 @@ if_block : IF LPAREN expression RPAREN command_block
   (ELSE IF LPAREN expression RPAREN command_block)*
   (ELSE command_block)? ;
 
-switch_block : SWITCH LPAREN id_optional_array (DOT id_optional_array)* RPAREN
+switch_block : SWITCH LPAREN expression RPAREN
   LCURLY case_block* default_block case_block* RCURLY;
 case_block : CASE LPAREN expression RPAREN command_block;
 default_block : DEFAULT command_block;
