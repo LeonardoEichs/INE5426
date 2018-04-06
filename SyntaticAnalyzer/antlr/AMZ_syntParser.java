@@ -51,8 +51,8 @@ public class AMZ_syntParser extends Parser {
 		"'/'", "'%'", "'!'", "'&&'", "'||'", "'{'", "'}'", "'['", "']'", "'('", 
 		"')'", "'='", "';'", "':'", "'.'", "','", "'#import'", "'while'", "'for'", 
 		"'switch'", "'case'", "'default'", "'if'", "'else'", "'break'", "'return'", 
-		"'int'", null, "'string'", "'double'", "'void'", "'object'", null, null, 
-		null, null, "'true'", "'false'"
+		"'int'", "'boolean'", "'string'", "'double'", "'void'", "'object'", null, 
+		null, null, null, "'true'", "'false'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "GREATER", "GREATEREQUAL", "LESS", "LESSEQUAL", "EQUAL", "NOTEQUAL", 

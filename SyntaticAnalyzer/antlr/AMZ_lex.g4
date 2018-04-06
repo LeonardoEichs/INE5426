@@ -50,7 +50,7 @@ RETURN : 'return' ;
 
 // Types
 INT : 'int' ;
-BOOLEAN : 'boolean' | 'bool' ;
+BOOLEAN : 'boolean' ;
 STRING : 'string' ;
 DOUBLE : 'double' ;
 VOID : 'void' ;
