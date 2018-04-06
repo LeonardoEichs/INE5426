@@ -13,7 +13,7 @@ void main() {
 		} else if (a == 10) {
 			print ("dez");
 		} else {
-			print ("default)";
+			print ("default");
 		}
 	}
 	
