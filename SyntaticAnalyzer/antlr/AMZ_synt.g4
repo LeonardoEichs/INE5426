@@ -5,7 +5,7 @@ import AMZ_lex;
 /*
  * ROOT:
  */
-eval : import_file* function_block* ;
+eval : import_file* function_block* EOF ;
 import_file: IMPORT STRING_LITERAL SEMICO ;
 
 /*

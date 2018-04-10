@@ -60,7 +60,7 @@ OBJECT: 'object';
 
 // Skip spaces, tabs, newline, comments
 WHITESPACE : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
-SINGLE_LINE_COMMENT : '//' ~[\n]* '\n' -> skip ;
+SINGLE_LINE_COMMENT : '//' ~[\n]* ('\n' | EOF) -> skip ;
 MULTI_LINE_COMMENT : '/*' ( ~'*' | '*'+ ~[*/] )* '*'* '*/' -> skip ;
 
 
