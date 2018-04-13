@@ -1,5 +1,5 @@
 #import "SYS_OUT";
-#import "ERRO"; // Missing #
+import "ERRO"; // Missing #
 
 // Missing ()
 void main {
