@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]
+  then
+    echo "Missing parameter"
+    exit 1
+fi
+antlr4 AMZ_synt.g4 || exit
+javac AMZ_synt*.java Test.java || exit
+clear
+java Test "$@"
