@@ -1,12 +1,14 @@
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.gui.TreeViewer;
+import org.antlr.v4.runtime.misc.IntervalSet;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
+
 
 public class Test {
 	public static void main(String[] args) throws Exception {
@@ -27,6 +29,9 @@ public class Test {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		// create a parser that feeds off the tokens buffer
 		AMZ_syntParser parser = new AMZ_syntParser(tokens);
+		parser.setErrorHandler(new ErrorStrategy());
+
+
 		ParseTree tree = parser.eval(); // begin parsing at eval rule
 		System.out.println(tree.toStringTree(parser)); // print tree as text
 
