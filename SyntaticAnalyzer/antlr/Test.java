@@ -20,6 +20,9 @@ public class Test {
 		// create a lexer that feeds off of input CharStream
 		AMZ_syntLexer lexer = new AMZ_syntLexer(input);
 		
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(new LexerError());
+
 		// create a buffer of tokens pulled from the lexer
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		// create a parser that feeds off the tokens buffer
