@@ -42,5 +42,21 @@ public class ErrorStrategy extends DefaultErrorStrategy {
 		recognizer.notifyErrorListeners(t, msg, null);
 	}
 
+	@Override
+	protected void reportNoViableAlternative(Parser recognizer,
+											 NoViableAltException e) {
+		TokenStream tokens = recognizer.getInputStream();
+		String input;
+		if ( tokens!=null ) {
+			if ( e.getStartToken().getType()==Token.EOF ) input = "<EOF>";
+			else input = tokens.getText(e.getStartToken(), e.getOffendingToken());
+		}
+		else {
+			input = "<entrada desconhecida>";
+		}
+		String msg = "sem alternativa viável na entrada "+escapeWSAndQuote(input);
+		recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
+	}
+
 
 }
