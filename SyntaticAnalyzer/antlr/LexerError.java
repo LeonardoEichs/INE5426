@@ -28,11 +28,11 @@ public class LexerError extends BaseErrorListener {
 			t.setLine(line);
 			t.setCharPositionInLine(charPositionInLine);
 			tokenError = t;
-		} 
+		}
 
-		System.err.println ("Erro de conhecimento do token "+ ((Token)tokenError).getText() + " na linha " + line +
-	    				   ", coluna " + charPositionInLine);	
+		System.err.println ("Erro de reconhecimento do token "+ ((Token)tokenError).getText() + " na linha " + line +
+	    				   ", coluna " + charPositionInLine);
 
     }
-   
+
 }

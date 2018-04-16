@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 public class ErrorStrategy extends DefaultErrorStrategy {
 	@Override
 	public void reportMissingToken(Parser recognizer) {
-		
+
 		if (inErrorRecoveryMode(recognizer)) {
 			return;
 		}
