@@ -10,8 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 
 
-public class Test {
+public class Main {
 	public static void main(String[] args) throws Exception {
+
 		String inputFile = null;
 		if ( args.length>0 ) {
 			inputFile = args[0];
@@ -22,25 +23,26 @@ public class Test {
 			is = new FileInputStream(inputFile);
 		}
 		ANTLRInputStream input = new ANTLRInputStream(is);
-		// create a lexer that feeds off of input CharStream
+
+		/* Lexer */
 		AMZ_syntLexer lexer = new AMZ_syntLexer(input);
-		
 		lexer.removeErrorListeners();
 		lexer.addErrorListener(new LexerError());
-
 		// create a buffer of tokens pulled from the lexer
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
+
 		// create a parser that feeds off the tokens buffer
+		/* Parser */
 		AMZ_syntParser parser = new AMZ_syntParser(tokens);
 		parser.setErrorHandler(new ErrorStrategy());
 
-
+		/* Parse Tree */
 		ParseTree tree = parser.eval(); // begin parsing at eval rule
 		System.out.println(tree.toStringTree(parser)); // print tree as text
-
 		if (Arrays.asList(args).contains("-gui")) {
 			treeGui(parser, tree);
 		}
+		
 	}
 
 	public static void treeGui(AMZ_syntParser parser, ParseTree tree) {
