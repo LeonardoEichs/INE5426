@@ -66,7 +66,8 @@ MULTI_LINE_COMMENT : '/*' ( ~'*' | '*'+ ~[*/] )* '*'* '*/' -> skip ;
 
 // Values
 fragment DIGIT : [0-9] ;
-NUMBER : DIGIT+ | DIGIT+ '.' DIGIT* | '.' DIGIT+ ;
+FLOAT : DIGIT+ '.' DIGIT* | '.' DIGIT+ ;
+INTEGER : DIGIT+ ;
 TRUE : 'true' ;
 FALSE : 'false' ;
 STRING_LITERAL : ('"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\' | 'n' | 'r' | 't'))* '"') ;

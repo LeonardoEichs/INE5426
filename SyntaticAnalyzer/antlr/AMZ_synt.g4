@@ -15,7 +15,7 @@ import_file: IMPORT STRING_LITERAL SEMICO ;
 declaration : type id_optional_array ;
 type : (INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT) ;
 id_optional_array : ID array_position* ;
-array_position : LSQUARE NUMBER RSQUARE ;
+array_position : LSQUARE INTEGER RSQUARE ;
 
 /*
  * EXPRESSION:
@@ -42,7 +42,7 @@ expression :  // higher precedence rules come first
   expression  logic_binary_op_lower_prec         expression ;
 
 
-value : NUMBER | STRING_LITERAL | object_literal | array_literal | TRUE | FALSE ;
+value : FLOAT | INTEGER | STRING_LITERAL | object_literal | array_literal | TRUE | FALSE ;
 
 function_call : ID (LPAREN arguments RPAREN) ;
 arguments : (expression (COMMA expression)*)? ;
