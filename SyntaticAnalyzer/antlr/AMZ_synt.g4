@@ -22,7 +22,8 @@ array_position : LSQUARE INTEGER RSQUARE ;
  */
 
 // Operator precedence based on c++
-unary_operator : NOT | ADD | MINUS ;
+unary_arithm_operator : ADD | MINUS ;
+unary_bool_operator : NOT ;
 arithmetic_binary_op_higher_prec : STAR | SLASH | MOD ;
 arithmetic_binary_op_lower_prec : ADD | MINUS ;
 comparison_op_higher_prec : GREATER | GREATEREQUAL | LESS | LESSEQUAL ;
@@ -33,7 +34,8 @@ logic_binary_op_lower_prec : OR ;
 expression :  // higher precedence rules come first
   LPAREN expression RPAREN |
   (value | ID | function_call) array_position* (DOT id_optional_array)* |
-  unary_operator expression |
+  unary_arithm_operator expression |
+  unary_bool_operator expression |
   expression  arithmetic_binary_op_higher_prec   expression |
   expression  arithmetic_binary_op_lower_prec    expression |
   expression  comparison_op_higher_prec          expression |
@@ -42,7 +44,8 @@ expression :  // higher precedence rules come first
   expression  logic_binary_op_lower_prec         expression ;
 
 
-value : FLOAT | INTEGER | STRING_LITERAL | object_literal | array_literal | TRUE | FALSE ;
+value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_literal | boolean_value ;
+boolean_value: TRUE | FALSE;
 
 function_call : ID (LPAREN arguments RPAREN) ;
 arguments : (expression (COMMA expression)*)? ;

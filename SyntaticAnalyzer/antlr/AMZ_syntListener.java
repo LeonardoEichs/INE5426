@@ -67,15 +67,25 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 */
 	void exitArray_position(AMZ_syntParser.Array_positionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AMZ_syntParser#unary_operator}.
+	 * Enter a parse tree produced by {@link AMZ_syntParser#unary_arithm_operator}.
 	 * @param ctx the parse tree
 	 */
-	void enterUnary_operator(AMZ_syntParser.Unary_operatorContext ctx);
+	void enterUnary_arithm_operator(AMZ_syntParser.Unary_arithm_operatorContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AMZ_syntParser#unary_operator}.
+	 * Exit a parse tree produced by {@link AMZ_syntParser#unary_arithm_operator}.
 	 * @param ctx the parse tree
 	 */
-	void exitUnary_operator(AMZ_syntParser.Unary_operatorContext ctx);
+	void exitUnary_arithm_operator(AMZ_syntParser.Unary_arithm_operatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#unary_bool_operator}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnary_bool_operator(AMZ_syntParser.Unary_bool_operatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#unary_bool_operator}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnary_bool_operator(AMZ_syntParser.Unary_bool_operatorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#arithmetic_binary_op_higher_prec}.
 	 * @param ctx the parse tree
@@ -156,6 +166,16 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValue(AMZ_syntParser.ValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#boolean_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolean_value(AMZ_syntParser.Boolean_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#boolean_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolean_value(AMZ_syntParser.Boolean_valueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#function_call}.
 	 * @param ctx the parse tree

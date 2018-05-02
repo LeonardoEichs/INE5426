@@ -87,13 +87,25 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUnary_operator(AMZ_syntParser.Unary_operatorContext ctx) { }
+	@Override public void enterUnary_arithm_operator(AMZ_syntParser.Unary_arithm_operatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUnary_operator(AMZ_syntParser.Unary_operatorContext ctx) { }
+	@Override public void exitUnary_arithm_operator(AMZ_syntParser.Unary_arithm_operatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUnary_bool_operator(AMZ_syntParser.Unary_bool_operatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnary_bool_operator(AMZ_syntParser.Unary_bool_operatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -190,6 +202,18 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitValue(AMZ_syntParser.ValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBoolean_value(AMZ_syntParser.Boolean_valueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBoolean_value(AMZ_syntParser.Boolean_valueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
