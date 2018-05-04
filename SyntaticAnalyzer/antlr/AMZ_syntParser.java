@@ -22,7 +22,8 @@ public class AMZ_syntParser extends Parser {
 		DOT=24, COMMA=25, IMPORT=26, WHILE=27, FOR=28, SWITCH=29, CASE=30, DEFAULT=31, 
 		IF=32, ELSE=33, BREAK=34, RETURN=35, INT=36, BOOLEAN=37, STRING=38, DOUBLE=39, 
 		VOID=40, OBJECT=41, WHITESPACE=42, SINGLE_LINE_COMMENT=43, MULTI_LINE_COMMENT=44, 
-		FLOAT=45, INTEGER=46, TRUE=47, FALSE=48, STRING_LITERAL=49, ID=50, ESCAPE_CHAR=51;
+		DOUBLE_LITERAL=45, INTEGER=46, TRUE=47, FALSE=48, STRING_LITERAL=49, ID=50, 
+		ESCAPE_CHAR=51;
 	public static final int
 		RULE_eval = 0, RULE_import_file = 1, RULE_declaration = 2, RULE_type = 3, 
 		RULE_id_optional_array = 4, RULE_array_position = 5, RULE_unary_arithm_operator = 6, 
@@ -62,7 +63,8 @@ public class AMZ_syntParser extends Parser {
 		"COLON", "DOT", "COMMA", "IMPORT", "WHILE", "FOR", "SWITCH", "CASE", "DEFAULT", 
 		"IF", "ELSE", "BREAK", "RETURN", "INT", "BOOLEAN", "STRING", "DOUBLE", 
 		"VOID", "OBJECT", "WHITESPACE", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", 
-		"FLOAT", "INTEGER", "TRUE", "FALSE", "STRING_LITERAL", "ID", "ESCAPE_CHAR"
+		"DOUBLE_LITERAL", "INTEGER", "TRUE", "FALSE", "STRING_LITERAL", "ID", 
+		"ESCAPE_CHAR"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -881,7 +883,7 @@ public class AMZ_syntParser extends Parser {
 				break;
 			case LCURLY:
 			case LSQUARE:
-			case FLOAT:
+			case DOUBLE_LITERAL:
 			case INTEGER:
 			case TRUE:
 			case FALSE:
@@ -1071,7 +1073,7 @@ public class AMZ_syntParser extends Parser {
 	}
 
 	public static class ValueContext extends ParserRuleContext {
-		public TerminalNode FLOAT() { return getToken(AMZ_syntParser.FLOAT, 0); }
+		public TerminalNode DOUBLE_LITERAL() { return getToken(AMZ_syntParser.DOUBLE_LITERAL, 0); }
 		public TerminalNode INTEGER() { return getToken(AMZ_syntParser.INTEGER, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(AMZ_syntParser.STRING_LITERAL, 0); }
 		public Object_literalContext object_literal() {
@@ -1104,11 +1106,11 @@ public class AMZ_syntParser extends Parser {
 			setState(184);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case FLOAT:
+			case DOUBLE_LITERAL:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(178);
-				match(FLOAT);
+				match(DOUBLE_LITERAL);
 				}
 				break;
 			case INTEGER:
@@ -1294,7 +1296,7 @@ public class AMZ_syntParser extends Parser {
 			setState(201);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(193);
 				expression(0);
@@ -1493,7 +1495,7 @@ public class AMZ_syntParser extends Parser {
 			setState(229);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(221);
 				expression(0);
@@ -1574,7 +1576,7 @@ public class AMZ_syntParser extends Parser {
 			case DOUBLE:
 			case VOID:
 			case OBJECT:
-			case FLOAT:
+			case DOUBLE_LITERAL:
 			case INTEGER:
 			case TRUE:
 			case FALSE:
@@ -1722,7 +1724,7 @@ public class AMZ_syntParser extends Parser {
 				setState(259);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 					{
 					setState(258);
 					expression(0);
@@ -1856,7 +1858,7 @@ public class AMZ_syntParser extends Parser {
 			setState(273);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << WHILE) | (1L << FOR) | (1L << SWITCH) | (1L << IF) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << WHILE) | (1L << FOR) | (1L << SWITCH) | (1L << IF) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(270);
@@ -1983,7 +1985,7 @@ public class AMZ_syntParser extends Parser {
 			setState(287);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(286);
 				simple_command();
@@ -1995,7 +1997,7 @@ public class AMZ_syntParser extends Parser {
 			setState(291);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(290);
 				expression(0);
@@ -2007,7 +2009,7 @@ public class AMZ_syntParser extends Parser {
 			setState(295);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << FLOAT) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << MINUS) | (1L << NOT) | (1L << LCURLY) | (1L << LSQUARE) | (1L << LPAREN) | (1L << BREAK) | (1L << RETURN) | (1L << INT) | (1L << BOOLEAN) | (1L << STRING) | (1L << DOUBLE) | (1L << VOID) | (1L << OBJECT) | (1L << DOUBLE_LITERAL) | (1L << INTEGER) | (1L << TRUE) | (1L << FALSE) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(294);
 				simple_command();

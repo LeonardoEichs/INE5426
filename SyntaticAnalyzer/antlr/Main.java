@@ -8,7 +8,8 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
-
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
@@ -42,7 +43,12 @@ public class Main {
 		if (Arrays.asList(args).contains("-gui")) {
 			treeGui(parser, tree);
 		}
-		
+
+		/* Semantic analysis */
+        ParseTreeWalker walker = new ParseTreeWalker();
+        AMZSemanticListener semanticListener = new AMZSemanticListener();
+        walker.walk(semanticListener, tree);
+       
 	}
 
 	public static void treeGui(AMZ_syntParser parser, ParseTree tree) {
