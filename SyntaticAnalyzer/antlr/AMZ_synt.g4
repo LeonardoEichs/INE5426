@@ -12,9 +12,8 @@ import_file: IMPORT STRING_LITERAL SEMICO ;
  * COMMON:
  */
 
-declaration : type id_optional_array ;
+declaration : type ID array_position? ;
 type : (INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT) ;
-id_optional_array : ID array_position* ;
 array_position : LSQUARE INTEGER RSQUARE ;
 
 /*
@@ -33,7 +32,7 @@ logic_binary_op_lower_prec : OR ;
 
 expression :  // higher precedence rules come first
   LPAREN expression RPAREN |
-  (value | ID | function_call) array_position* (DOT id_optional_array)* |
+  (value | ID | function_call) array_position? object_id? |
   unary_arithm_operator expression |
   unary_bool_operator expression |
   expression  arithmetic_binary_op_higher_prec   expression |
@@ -45,7 +44,8 @@ expression :  // higher precedence rules come first
 
 
 value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_literal | boolean_value ;
-boolean_value: TRUE | FALSE;
+boolean_value : TRUE | FALSE;
+object_id : DOT ID array_position? object_id? ;
 
 function_call : ID (LPAREN arguments RPAREN) ;
 arguments : (expression (COMMA expression)*)? ;
@@ -64,7 +64,7 @@ simple_command :
   expression |
   declaration EQUALS expression |
   declaration |
-  id_optional_array (DOT id_optional_array)* EQUALS expression |
+  ID array_position? object_id? EQUALS expression |
   BREAK |
   RETURN expression? ;
 block_command : while_block | if_block | for_block | switch_block;

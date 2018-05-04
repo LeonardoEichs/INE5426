@@ -47,16 +47,6 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 */
 	void exitType(AMZ_syntParser.TypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AMZ_syntParser#id_optional_array}.
-	 * @param ctx the parse tree
-	 */
-	void enterId_optional_array(AMZ_syntParser.Id_optional_arrayContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AMZ_syntParser#id_optional_array}.
-	 * @param ctx the parse tree
-	 */
-	void exitId_optional_array(AMZ_syntParser.Id_optional_arrayContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#array_position}.
 	 * @param ctx the parse tree
 	 */
@@ -176,6 +166,16 @@ public interface AMZ_syntListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolean_value(AMZ_syntParser.Boolean_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AMZ_syntParser#object_id}.
+	 * @param ctx the parse tree
+	 */
+	void enterObject_id(AMZ_syntParser.Object_idContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AMZ_syntParser#object_id}.
+	 * @param ctx the parse tree
+	 */
+	void exitObject_id(AMZ_syntParser.Object_idContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AMZ_syntParser#function_call}.
 	 * @param ctx the parse tree

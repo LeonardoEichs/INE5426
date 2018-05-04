@@ -63,18 +63,6 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterId_optional_array(AMZ_syntParser.Id_optional_arrayContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitId_optional_array(AMZ_syntParser.Id_optional_arrayContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterArray_position(AMZ_syntParser.Array_positionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -214,6 +202,18 @@ public class AMZ_syntBaseListener implements AMZ_syntListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBoolean_value(AMZ_syntParser.Boolean_valueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterObject_id(AMZ_syntParser.Object_idContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitObject_id(AMZ_syntParser.Object_idContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
