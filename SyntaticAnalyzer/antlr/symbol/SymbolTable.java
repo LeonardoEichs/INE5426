@@ -1,8 +1,10 @@
+package symbol;
+
 import java.util.HashMap;
 
 public class SymbolTable {
 
-    private HashMap<String, Symbol> symbols = new HashMap<>(); // Maps an id to a symbol type 
+    private HashMap<String, Symbol> symbols = new HashMap<>(); // Maps an id to a symbol type
     public SymbolTable parent; // References parent table
 
     public SymbolTable(SymbolTable parent) {

@@ -1,3 +1,5 @@
+package symbol;
+
 public class VariableSymbol extends Symbol {
 
 	public int length; // for arrays

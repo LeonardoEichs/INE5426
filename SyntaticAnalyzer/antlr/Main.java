@@ -11,6 +11,9 @@ import javax.swing.JPanel;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import error.*;
+import symbol.*;
+
 public class Main {
 	public static void main(String[] args) throws Exception {
 
@@ -48,7 +51,7 @@ public class Main {
         ParseTreeWalker walker = new ParseTreeWalker();
         AMZSemanticListener semanticListener = new AMZSemanticListener();
         walker.walk(semanticListener, tree);
-       
+
 	}
 
 	public static void treeGui(AMZ_syntParser parser, ParseTree tree) {

@@ -1,3 +1,5 @@
+package symbol;
+
 public class FunctionSymbol extends Symbol {
 	public int parameters;
 	public int returnLength;

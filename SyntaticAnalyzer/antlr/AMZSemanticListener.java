@@ -1,5 +1,7 @@
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
+import symbol.*;
+
 public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public SymbolTable symbolTable;
