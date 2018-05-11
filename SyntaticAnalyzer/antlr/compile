@@ -5,7 +5,7 @@ if [ -z "$1" ]
     echo "Missing parameter"
     exit 1
 fi
-java -Xmx500M -cp "/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool AMZ_synt.g4 || exit
-javac AMZ_synt*.java Main.java || exit
+java -Xmx500M -cp "/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool AMZ_synt.g4 -o ./generated || exit
+javac generated/AMZ_synt*.java Main.java -d ./compiled || exit
 clear
-java Main "$@"
+java -cp "./compiled:$CLASSPATH" Main "$@"
