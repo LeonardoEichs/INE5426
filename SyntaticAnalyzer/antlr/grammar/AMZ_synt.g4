@@ -30,17 +30,19 @@ comparison_op_lower_prec : EQUAL | NOTEQUAL ;
 logic_binary_op_higher_prec : AND ;
 logic_binary_op_lower_prec : OR ;
 
-expression :  // higher precedence rules come first
-  LPAREN expression RPAREN |
-  (value | ID | function_call) array_position? object_id? |
-  unary_arithm_operator expression |
-  unary_bool_operator expression |
-  expression  arithmetic_binary_op_higher_prec   expression |
-  expression  arithmetic_binary_op_lower_prec    expression |
-  expression  comparison_op_higher_prec          expression |
-  expression  comparison_op_lower_prec           expression |
-  expression  logic_binary_op_higher_prec        expression |
-  expression  logic_binary_op_lower_prec         expression ;
+// higher precedence rules come first
+expression
+  : LPAREN expression RPAREN #ExpParen
+  | (value | ID | function_call) array_position? object_id? #ExpExit
+  | unary_arithm_operator expression #ExpUnaryArithm
+  | unary_bool_operator expression #ExpUnaryBool
+  | expression  arithmetic_binary_op_higher_prec   expression #ExpBinArithmH
+  | expression  arithmetic_binary_op_lower_prec    expression #ExpBinArithmL
+  | expression  comparison_op_higher_prec          expression #ExpBinCompH
+  | expression  comparison_op_lower_prec           expression #ExpBinCompL
+  | expression  logic_binary_op_higher_prec        expression #ExpBinLogicH
+  | expression  logic_binary_op_lower_prec         expression #ExpBinLogicL
+  ;
 
 
 value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_literal | boolean_value ;

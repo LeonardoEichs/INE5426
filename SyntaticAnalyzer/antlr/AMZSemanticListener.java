@@ -4,11 +4,20 @@ import symbol.*;
 
 public class AMZSemanticListener extends AMZ_syntBaseListener {
 
+	private enum Type {
+		INT,
+		DOUBLE,
+		BOOLEAN,
+		STRING,
+		OBJECT,
+		VOID
+	}
+
 	public SymbolTable symbolTable;
 
 	//anotacoes
-	private ParseTreeProperty<String> types = new ParseTreeProperty<>();
-	private ParseTreeProperty<String> id = new ParseTreeProperty<>();
+	private ParseTreeProperty<Type> types = new ParseTreeProperty<>();
+	// private ParseTreeProperty<String> id = new ParseTreeProperty<>();
 	private ParseTreeProperty<Integer> sizes = new ParseTreeProperty<>();
 
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
@@ -18,22 +27,36 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void exitValue(AMZ_syntParser.ValueContext ctx) {
 		if (ctx.DOUBLE_LITERAL() != null) {
-			double val = Double.parseDouble(ctx.DOUBLE_LITERAL().getText());
-			System.out.println(val);
-		} else if (ctx.INTEGER() != null) {
-			int val = Integer.parseInt(ctx.INTEGER().getText());
-			System.out.println(val);
-		} else if (ctx.STRING_LITERAL() != null) {
-			String val = ctx.STRING_LITERAL().getText();
-			val = val.substring(1, val.length()-1)
-				.replace("\\\"", "\"")
-				.replace("\\\\", "\\")
-				.replace("\\r", "\r")
-				.replace("\\n", "\n")
-				.replace("\\t", "\t");
-			System.out.println(val);
-		} else {
+			types.put(ctx, Type.DOUBLE);
+			sizes.put(ctx, -1);
 
+			// double val = Double.parseDouble(ctx.DOUBLE_LITERAL().getText());
+		} else if (ctx.INTEGER() != null) {
+			types.put(ctx, Type.INT);
+			sizes.put(ctx, -1);
+
+			// int val = Integer.parseInt(ctx.INTEGER().getText());
+		} else if (ctx.STRING_LITERAL() != null) {
+			types.put(ctx, Type.STRING);
+			sizes.put(ctx, -1);
+
+			// String val = ctx.STRING_LITERAL().getText();
+			// val = val.substring(1, val.length()-1)
+			// 	.replace("\\\"", "\"")
+			// 	.replace("\\\\", "\\")
+			// 	.replace("\\r", "\r")
+			// 	.replace("\\n", "\n")
+			// 	.replace("\\t", "\t");
+
+		} else if (ctx.object_literal() != null) {
+			types.put(ctx, Type.OBJECT);
+			sizes.put(ctx, -1);
+		} else if (ctx.array_literal() != null) {
+			types.put(ctx, types.get(ctx.array_literal()));
+			sizes.put(ctx, sizes.get(ctx.array_literal()));
+		} else if (ctx.boolean_value() != null) {
+			types.put(ctx, Type.BOOLEAN);
+			sizes.put(ctx, -1);
 		}
 	}
 
@@ -63,9 +86,37 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				}
 				return;
 		}
+	}
 
 
+	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
 
+		// Predicado:
+		if ( (type0 != Type.DOUBLE && type0 != Type.INT)
+			|| (type1 != Type.DOUBLE && type1 != Type.INT)) {
+			System.out.println("Tipo esperado: double ou int.");
+			return;
+		}
 
+		if (type0 == Type.DOUBLE || type1 == Type.DOUBLE) {
+			types.put(ctx, Type.DOUBLE);
+		} else {
+			types.put(ctx, Type.INT);
+		}
+	}
+
+	public void exitExpParen(AMZ_syntParser.ExpParenContext ctx) {
+
+	}
+
+	public void exitExpExit(AMZ_syntParser.ExpExitContext ctx) {
+		if (ctx.value() != null) {
+			types.put(ctx, types.get(ctx.value()));
+		} else if (ctx.ID() != null) {
+
+		}
+	}
 
 }
