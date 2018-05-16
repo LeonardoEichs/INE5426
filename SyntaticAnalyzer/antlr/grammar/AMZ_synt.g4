@@ -62,13 +62,14 @@ array_literal : LSQUARE (expression (COMMA expression)*)? RSQUARE;
  */
 
 command : simple_command SEMICO | block_command ;
-simple_command :
-  expression |
-  declaration EQUALS expression |
-  declaration |
-  ID array_position? object_id? EQUALS expression |
-  BREAK |
-  RETURN expression? ;
+simple_command
+  : expression #CmdExp
+  | declaration EQUALS expression #CmdDeclAttrib
+  | declaration #CmdDecl
+  | ID array_position? object_id? EQUALS expression #CmdAttrib
+  | BREAK #CmdBreak
+  | RETURN expression? #CmdReturn
+  ;
 block_command : while_block | if_block | for_block | switch_block;
 command_block : LCURLY command* RCURLY;
 

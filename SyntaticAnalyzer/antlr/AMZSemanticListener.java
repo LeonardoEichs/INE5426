@@ -101,7 +101,38 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			symbol = new Symbol(Symbol.SymbolType.VARIABLE);
 			symbolTable.put(id, symbol);
 		}
+
+		types.put(ctx, types.get(ctx.type()));
+		Integer size = -1;
+		if (ctx.array_position() != null) {
+			size = sizes.get(ctx.array_position());
+		}
+		sizes.put(ctx, size);
 		symbolTable.printTable();
+	}
+
+	public void exitArray_position(AMZ_syntParser.Array_positionContext ctx) {
+		Integer size = Integer.parseInt(ctx.INTEGER().getText());
+		sizes.put(ctx, size);
+	}
+
+	public void exitCmdDeclAttrib(AMZ_syntParser.CmdDeclAttribContext ctx) {
+		Type type0 = types.get(ctx.declaration());
+		Type type1 = types.get(ctx.expression());
+		Integer size0 = sizes.get(ctx.declaration());
+		Integer size1 = sizes.get(ctx.expression());
+		if (size0 != null && size1 != null && !size0.equals(size1)) {
+			System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+			String strSize0 = size0 == -1 ? "Não array" : "Array de tamanho " + size0;
+			String strSize1 = size1 == -1 ? "Não array" : "Array de tamanho " + size1;
+			System.out.println("Atribuição com tamanho incompatível. Recebido: "
+				+ strSize1 + ". Esperava-se: " + strSize0 + '.');
+		}
+		if (type0 != type1) {
+			System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+			System.out.println("Atribuição com tipo incompatível. Recebido: "
+				+ type1 + ". Esperava-se: " + type0 + '.');
+		}
 	}
 
 	public void enterBlock_command(AMZ_syntParser.Block_commandContext ctx) {
@@ -118,6 +149,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
 		symbolTable = symbolTable.parent;
+	}
+
 	private boolean requireNotArray(Integer size, Integer line) {
 		if (size == null || size.intValue() != -1) {
 			System.out.println("Erro na linha " + line + ":");
@@ -217,6 +250,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
+	}
+
+	public void exitExpBinCompL(AMZ_syntParser.ExpBinLogicHContext ctx) {
+
 	}
 
 	// ok
