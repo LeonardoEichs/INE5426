@@ -5,12 +5,22 @@ import symbol.*;
 public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	private enum Type {
-		INT,
-		DOUBLE,
-		BOOLEAN,
-		STRING,
-		OBJECT,
-		VOID
+		INT ("int"),
+		DOUBLE ("double"),
+		BOOLEAN ("boolean"),
+		STRING ("string"),
+		OBJECT ("object"),
+		VOID ("void");
+
+		private final String name;
+
+    private Type(String s) {
+        name = s;
+    }
+
+		public String toString() {
+			return this.name;
+	 }
 	}
 
 	public SymbolTable symbolTable;
@@ -88,22 +98,75 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	private boolean requireNotArray(Integer size, Integer line) {
+		if (size == null || size.intValue() != -1) {
+			System.out.println("Erro na linha " + line + ":");
+			System.out.println("Array recebido. Não se esperava um array.");
+			return false;
+		}
+		return true;
+	}
+
+	private boolean requireNumber(Type t, int line) {
+		if (t != Type.DOUBLE && t != Type.INT) {
+			System.out.println("Erro na linha " + line + ":");
+			System.out.println("Tipo inválido. Esperava-se double ou int. Recebido: " + t + ".");
+			return false;
+		}
+		return true;
+	}
+
+	private Type checkNumberBinType(Type type0, Type type1, int line) {
+
+		if (!requireNumber(type0, line) || requireNumber(type1, line)) {
+			return null;
+		}
+
+		if (type0 == Type.DOUBLE || type1 == Type.DOUBLE) {
+			return Type.DOUBLE;
+		} else {
+			return Type.INT;
+		}
+
+	}
 
 	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
+		int line = ctx.getStart().getLine();
+		types.put(ctx, checkNumberBinType(type0, type1, line));
 
-		// Predicado:
-		if ( (type0 != Type.DOUBLE && type0 != Type.INT)
-			|| (type1 != Type.DOUBLE && type1 != Type.INT)) {
-			System.out.println("Tipo esperado: double ou int.");
-			return;
+		Integer size0 = sizes.get(ctx.expression(0));
+		Integer size1 = sizes.get(ctx.expression(1));
+		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+			sizes.put(ctx, -1);
 		}
+	}
 
-		if (type0 == Type.DOUBLE || type1 == Type.DOUBLE) {
-			types.put(ctx, Type.DOUBLE);
-		} else {
-			types.put(ctx, Type.INT);
+	public void exitExpBinArithmH(AMZ_syntParser.ExpBinArithmHContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
+		int line = ctx.getStart().getLine();
+		types.put(ctx, checkNumberBinType(type0, type1, line));
+
+		Integer size0 = sizes.get(ctx.expression(0));
+		Integer size1 = sizes.get(ctx.expression(1));
+		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+			sizes.put(ctx, -1);
+		}
+	}
+
+	public void exitExpBinCompH(AMZ_syntParser.ExpBinCompHContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
+		int line = ctx.getStart().getLine();
+		if (checkNumberBinType(type0, type1, line) != null) {
+			types.put(ctx, Type.BOOLEAN);
+		}
+		Integer size0 = sizes.get(ctx.expression(0));
+		Integer size1 = sizes.get(ctx.expression(1));
+		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+			sizes.put(ctx, -1);
 		}
 	}
 
@@ -111,12 +174,16 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	}
 
+	// expression : (value | ID | function_call) array_position? object_id? #ExpExit
 	public void exitExpExit(AMZ_syntParser.ExpExitContext ctx) {
+		//TODO object_id
 		if (ctx.value() != null) {
 			types.put(ctx, types.get(ctx.value()));
+			sizes.put(ctx, sizes.get(ctx.value()));
 		} else if (ctx.ID() != null) {
 
 		}
 	}
+
 
 }
