@@ -10,7 +10,7 @@ public class Symbol {
 
     public SymbolType type; // Variable, function, object
 
-    Symbol(SymbolType type) {
+    public Symbol(SymbolType type) {
         this.type = type;
     }
 

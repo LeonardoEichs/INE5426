@@ -67,6 +67,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	//parameters : (declaration (COMMA declaration)*)? ;
 	// object_element : declaration COLON expression ;
 	//verifica se ID ja foi declarado se não anota
+
 	public void exitDeclaration(AMZ_syntParser.DeclarationContext ctx) {
 		String id = ctx.ID().getText();
 
@@ -85,7 +86,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					break;
 				}
 				return;
+		} else {
+			// String type = ctx.type().getText();
+			symbol = new Symbol(Symbol.SymbolType.VARIABLE);
+			symbolTable.put(id, symbol);
 		}
+		symbolTable.printTable();
 	}
 
 	public void enterBlock_command(AMZ_syntParser.Block_commandContext ctx) {
