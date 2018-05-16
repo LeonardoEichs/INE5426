@@ -98,6 +98,20 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	public void enterBlock_command(AMZ_syntParser.Block_commandContext ctx) {
+		symbolTable = new SymbolTable(symbolTable);
+	}
+
+	public void exitBlock_command(AMZ_syntParser.Block_commandContext ctx) {
+		symbolTable = symbolTable.parent;
+	}
+
+	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+		symbolTable = symbolTable.parent;
+	}
+
+	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
+		symbolTable = symbolTable.parent;
 	private boolean requireNotArray(Integer size, Integer line) {
 		if (size == null || size.intValue() != -1) {
 			System.out.println("Erro na linha " + line + ":");
@@ -130,6 +144,35 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	}
 
+	public void exitFor_block(AMZ_syntParser.For_blockContext ctx) {
+		symbolTable = symbolTable.parent;
+	}
+
+	public void exitType(AMZ_syntParser.TypeContext ctx) {
+		if (ctx.DOUBLE() != null) {
+			types.put(ctx, Type.DOUBLE);
+			sizes.put(ctx, -1);
+		} else if (ctx.INT() != null) {
+			types.put(ctx, Type.INT);
+			sizes.put(ctx, -1);
+		} else if (ctx.STRING() != null) {
+			types.put(ctx, Type.STRING);
+			sizes.put(ctx, -1);
+		} else if (ctx.OBJECT() != null) {
+			types.put(ctx, Type.OBJECT);
+			sizes.put(ctx, -1);
+		} else if (ctx.BOOLEAN() != null) {
+			types.put(ctx, Type.BOOLEAN);
+			sizes.put(ctx, -1);
+		} else {
+			types.put(ctx, Type.VOID);
+			sizes.put(ctx, -1);
+		}
+
+		// System.out.println(ctx.getText() + " " + types.get(ctx));
+	}
+
+	// ok
 	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
@@ -168,6 +211,57 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
+	}
+
+	// ok
+	public void exitExpUnaryArithm(AMZ_syntParser.ExpUnaryArithmContext ctx) {
+		Type type = types.get(ctx.expression());
+		if (type != Type.DOUBLE && type != Type.INT) {
+			System.out.println("Tipo esperado: double ou int.");
+			return;
+		}
+		else if (type == Type.DOUBLE) {
+			types.put(ctx, Type.DOUBLE);
+		} else {
+			types.put(ctx, Type.INT);
+		}
+
+		sizes.put(ctx, -1);
+	}
+
+	// ok
+	public void exitExpUnaryBool(AMZ_syntParser.ExpUnaryBoolContext ctx) {
+		Type type = types.get(ctx.expression());
+		if (type != Type.BOOLEAN) {
+			System.out.println("Tipo esperado: boolean.");
+			return;
+		} else {
+			types.put(ctx, Type.BOOLEAN);
+		}
+		sizes.put(ctx, -1);
+
+	}
+
+	// ok
+	public void exitExpBinLogicL(AMZ_syntParser.ExpBinLogicLContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
+		if (type0 != Type.BOOLEAN || type1 != Type.BOOLEAN) {
+			System.out.println("Operandos devem ser do tipo boolean");
+			return;
+		}
+		types.put(ctx, Type.BOOLEAN);
+	}
+
+	// ok
+	public void exitExpBinLogicH(AMZ_syntParser.ExpBinLogicHContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
+		if (type0 != Type.BOOLEAN || type1 != Type.BOOLEAN) {
+			System.out.println("Operandos devem ser do tipo boolean");
+			return;
+		}
+		types.put(ctx, Type.BOOLEAN);
 	}
 
 	public void exitExpParen(AMZ_syntParser.ExpParenContext ctx) {

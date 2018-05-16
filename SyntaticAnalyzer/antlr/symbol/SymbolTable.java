@@ -11,12 +11,18 @@ public class SymbolTable {
         this.parent = parent;
     }
 
-    public void add(String id, Symbol symbol) {
+    public void put(String id, Symbol symbol) {
         symbols.put(id, symbol);
     }
 
     public Symbol lookup(String id) {
         return symbols.get(id);
+    }
+
+    public void printTable() {
+        for(String id : symbols.keySet()) {
+            System.out.println(id + " " +  symbols.get(id));
+        }
     }
 
 }
