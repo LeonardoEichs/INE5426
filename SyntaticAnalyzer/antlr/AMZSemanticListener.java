@@ -144,7 +144,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	}
 
 	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
-		symbolTable = symbolTable.parent;
+		// symbolTable = symbolTable.parent;
 	}
 
 	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
@@ -211,12 +211,14 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		// System.out.println(ctx.getText() + " " + types.get(ctx));
 	}
 
-	// ok
+	// expression  arithmetic_binary_op_lower_prec    expression
 	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
 		int line = ctx.getStart().getLine();
+		
 		types.put(ctx, checkNumberBinType(type0, type1, line));
+
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
@@ -225,6 +227,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	// expression  arithmetic_binary_op_higher_prec    expression
 	public void exitExpBinArithmH(AMZ_syntParser.ExpBinArithmHContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
@@ -238,6 +241,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	// expression  comparison_op_higher_prec          expression
 	public void exitExpBinCompH(AMZ_syntParser.ExpBinCompHContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
@@ -252,11 +256,50 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
-	public void exitExpBinCompL(AMZ_syntParser.ExpBinLogicHContext ctx) {
-
+	// expression  comparison_op_lower_prec          expression
+	public void exitExpBinCompL(AMZ_syntParser.ExpBinCompLContext ctx) {
+		Type type0 = types.get(ctx.expression(0));
+		Type type1 = types.get(ctx.expression(1));
+		int line = ctx.getStart().getLine();
+		if (type0 == Type.BOOLEAN) {
+			if (type1 != Type.BOOLEAN) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipos incompatíveis");
+				return;
+			}
+		} else if (type0 == Type.INT) {
+			if (type1 != Type.INT) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipos incompatíveis");
+				return;
+			}
+		} else if (type0 == Type.DOUBLE) {
+			if (type1 != Type.DOUBLE) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipos incompatíveis");
+				return;
+			}
+		} else if (type0 == Type.STRING) {
+			if (type1 != Type.STRING) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipos incompatíveis");
+				return;
+			}
+		} else {
+			System.out.println("Erro na linha " + line + ":");
+			System.out.println("Tipo não permitido");
+			return;
+		}
+		types.put(ctx, Type.BOOLEAN);
+		Integer size0 = sizes.get(ctx.expression(0));
+		Integer size1 = sizes.get(ctx.expression(1));
+		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+			sizes.put(ctx, -1);
+		}
 	}
 
-	// ok
+
+	// unary_arithm_operator expression
 	public void exitExpUnaryArithm(AMZ_syntParser.ExpUnaryArithmContext ctx) {
 		Type type = types.get(ctx.expression());
 		if (type != Type.DOUBLE && type != Type.INT) {
@@ -272,7 +315,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		sizes.put(ctx, -1);
 	}
 
-	// ok
+	// unary_bool_operator expression
 	public void exitExpUnaryBool(AMZ_syntParser.ExpUnaryBoolContext ctx) {
 		Type type = types.get(ctx.expression());
 		if (type != Type.BOOLEAN) {
