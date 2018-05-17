@@ -296,11 +296,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			sizes.put(ctx, -1);
 		}
 		types.put(ctx, Type.BOOLEAN);
-		Integer size0 = sizes.get(ctx.expression(0));
-		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
-			sizes.put(ctx, -1);
-		}
 	}
 
 	public void exitExpBinLogicH(AMZ_syntParser.ExpBinLogicHContext ctx) {
