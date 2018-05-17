@@ -30,7 +30,7 @@ LSQUARE : '[' ;
 RSQUARE : ']' ;
 LPAREN : '(';
 RPAREN : ')' ;
-EQUALS : '=' ;
+ASSIGN : '=' ;
 SEMICO : ';' ;
 COLON : ':' ;
 DOT : '.';

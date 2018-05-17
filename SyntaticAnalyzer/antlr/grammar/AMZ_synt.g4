@@ -64,9 +64,9 @@ array_literal : LSQUARE (expression (COMMA expression)*)? RSQUARE;
 command : simple_command SEMICO | block_command ;
 simple_command
   : expression #CmdExp
-  | declaration EQUALS expression #CmdDeclAttrib
+  | declaration ASSIGN expression #CmdDeclAttrib
   | declaration #CmdDecl
-  | ID array_position? object_id? EQUALS expression #CmdAttrib
+  | ID array_position? object_id? ASSIGN expression #CmdAttrib
   | BREAK #CmdBreak
   | RETURN expression? #CmdReturn
   ;

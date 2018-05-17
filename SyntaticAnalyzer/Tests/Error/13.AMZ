@@ -7,4 +7,7 @@ void main() {
 	int d = [8, 3] + 5;
 	boolean e = "a" > 3;
 	string f [2] = 1;
+	int g = true && false;
+	boolean h = true || 1;
+	boolean i = 1 == [2, 3];
 }
