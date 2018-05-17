@@ -116,6 +116,23 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		sizes.put(ctx, size);
 	}
 
+	public void exitArray_literal(AMZ_syntParser.Array_literalContext ctx) {
+		int size = ctx.expression().size();
+		if (size > 0) {
+			Type type = types.get(ctx.expression(0));
+			sizes.put(ctx, size);
+			types.put(ctx, type);
+			for (int i = 1; i < size; i++) {
+				if (types.get(ctx.expression(i)) != type) {
+					System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+					System.out.println("Array com valores de diferentes tipos");
+				}
+			}
+
+		}
+
+	}
+
 	public void exitCmdDeclAttrib(AMZ_syntParser.CmdDeclAttribContext ctx) {
 		Type type0 = types.get(ctx.declaration());
 		Type type1 = types.get(ctx.expression());
