@@ -22,7 +22,7 @@ public class SymbolTable extends Symbol {
 
     public void printTable() {
         for(String id : symbols.keySet()) {
-            System.out.println(id + " " +  symbols.get(id));
+            System.out.println(id + " " +  symbols.get(id).type + " " + symbols.get(id).valueType);
         }
     }
 

@@ -2,6 +2,8 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 import symbol.*;
 
+import java.util.ArrayList;
+
 public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	private enum Type {
@@ -14,13 +16,14 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		private final String name;
 
-    private Type(String s) {
-        name = s;
-    }
+	    private Type(String s) {
+	        name = s;
+	    }
 
 		public String toString() {
 			return this.name;
-	 }
+	 	}
+
 	}
 
 	public SymbolTable symbolTable;
@@ -39,7 +42,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		if (ctx.DOUBLE_LITERAL() != null) {
 			types.put(ctx, Type.DOUBLE);
 			sizes.put(ctx, -1);
-
 			// double val = Double.parseDouble(ctx.DOUBLE_LITERAL().getText());
 		} else if (ctx.INTEGER() != null) {
 			types.put(ctx, Type.INT);
@@ -108,7 +110,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			size = sizes.get(ctx.array_position());
 		}
 		sizes.put(ctx, size);
-		symbolTable.printTable();
+		// symbolTable.printTable();
 	}
 
 	public void exitArray_position(AMZ_syntParser.Array_positionContext ctx) {
@@ -228,14 +230,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		// System.out.println(ctx.getText() + " " + types.get(ctx));
 	}
 
-	// expression  arithmetic_binary_op_lower_prec    expression
-	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
+	// expression  arithmetic_binary_op_higher_prec    expression
+	public void exitExpBinArithmH(AMZ_syntParser.ExpBinArithmHContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
 		int line = ctx.getStart().getLine();
-
 		types.put(ctx, checkNumberBinType(type0, type1, line));
-
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
@@ -244,8 +244,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
-	// expression  arithmetic_binary_op_higher_prec    expression
-	public void exitExpBinArithmH(AMZ_syntParser.ExpBinArithmHContext ctx) {
+	public void exitExpBinArithmL(AMZ_syntParser.ExpBinArithmLContext ctx) {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
 		int line = ctx.getStart().getLine();
@@ -278,6 +277,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
 		int line = ctx.getStart().getLine();
+		//TODO: checar tamanho de array
 		if (type0 == Type.BOOLEAN) {
 			if (type1 != Type.BOOLEAN) {
 				System.out.println("Erro na linha " + line + ":");
@@ -438,8 +438,51 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitObject_literal(AMZ_syntParser.Object_literalContext ctx) {
 		SymbolTable object = symbolTable;
 		symbolTable = symbolTable.parent;
-		
+
 
 	}
+        // int n_params = ctx.param().size();
+        // int return_size = Integer.parseInt(ctx.size().NUMBER().getText());
+        // FunSymbol fun_symbol = new FunSymbol(n_params, return_size);
+        // table.add(id, fun_symbol);
+
+	// function_block : declaration LPAREN parameters RPAREN command_block ;
+    public void exitFunction_block(AMZ_syntParser.Function_blockContext ctx) {
+    	String type = ctx.declaration().type().getText();
+    	String id = ctx.declaration().ID().getText();
+    	Integer size = sizes.get(ctx.declaration());
+    	Integer nParam = ctx.parameters().declaration().size();
+    	ArrayList<String> paramTypes = new ArrayList<>();
+    	ArrayList<Integer> paramSizes = new ArrayList<>();
+
+
+    	for (int i = 0; i < nParam; i++) {
+    		String pType = (types.get(ctx.parameters().declaration(i).type())).toString();
+    		Integer pSize = sizes.get(ctx.parameters().declaration(i));
+       		paramTypes.add(pType);
+       		paramSizes.add(pSize);
+       	}
+
+    	Symbol symbol = new FunctionSymbol(type, paramTypes, paramSizes, size);
+    	symbolTable.put(id, symbol);
+    	symbolTable.printTable();
+
+    }
+
+    // parameters : (declaration (COMMA declaration)*)? ;
+	public void exitParameters(AMZ_syntParser.ParametersContext ctx) {
+		int size = ctx.declaration().size();
+		for(int i = 0; i < size; i++) {
+			types.put(ctx.declaration(i), types.get(ctx.declaration(i).type()));
+			Integer aSize = -1;
+			if (ctx.declaration(i).array_position() != null) {
+				aSize = sizes.get(ctx.declaration(i).array_position());
+			}
+			sizes.put(ctx, aSize);
+		}
+
+    	// System.out.println(param.size());
+	}
+
 
 }
