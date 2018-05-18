@@ -29,14 +29,17 @@ public class Symbol {
 
     public SymbolType type; // Variable, function, object
     public SymbolValueType valueType;
+    public Integer size = -1;
 
-	public Symbol(SymbolType type) {
+	public Symbol(SymbolType type, Integer size) {
         this.type = type;
+        this.size = size;
     }
 
-    public Symbol(SymbolType type, SymbolValueType valueType) {
+    public Symbol(SymbolType type, SymbolValueType valueType, Integer size) {
         this.type = type;
         this.valueType = valueType;
+        this.size = size;
     }
 
 }

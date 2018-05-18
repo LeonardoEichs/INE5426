@@ -3,17 +3,15 @@ package symbol;
 public class VariableSymbol extends Symbol {
 
 	public String variableType;
-	public int length; // for arrays
 	public boolean initialized; // check variable initialization
 
-	public VariableSymbol(String variableType, int length, boolean initialized) {
-		super(Symbol.SymbolType.VARIABLE);
+	public VariableSymbol(String variableType, boolean initialized, Integer size) {
+		super(Symbol.SymbolType.VARIABLE, size);
 		if (variableType.equals("void")) {
 			System.out.println("Void não pode ser tipo de variável");
 			return;
 		}
 		this.variableType = variableType;
-		this.length = length;
 		this.initialized = initialized;
 		setVariableType();
 	}
