@@ -86,5 +86,7 @@ switch_block : SWITCH LPAREN expression RPAREN
 case_block : CASE LPAREN expression RPAREN command_block; //ok
 default_block : DEFAULT command_block; //ok
 
-function_block : declaration LPAREN parameters RPAREN command_block ;
+//TODO ver se precisa criar regras em func_command_block;
+func_command_block : LCURLY command* (RETURN expression?)? RCURLY;
+function_block : declaration LPAREN parameters RPAREN func_command_block ;
 parameters : (declaration (COMMA declaration)*)? ;

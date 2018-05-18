@@ -1,4 +1,6 @@
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.ParserRuleContext;
+
 
 import symbol.*;
 
@@ -37,21 +39,17 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	//anotacoes
 	private ParseTreeProperty<Type> types = new ParseTreeProperty<>();
-	private ParseTreeProperty<String> productionName = new ParseTreeProperty<>();
+	private ParseTreeProperty<String> productionNames = new ParseTreeProperty<>();
 	// private ParseTreeProperty<String> id = new ParseTreeProperty<>();
 	private ParseTreeProperty<Integer> sizes = new ParseTreeProperty<>();
 
 	public void enterFunction_block(AMZ_syntParser.Function_blockContext ctx) {
-		productionName.put(ctx, "function_block");
+		productionNames.put(ctx, "function_block");
 	}
 
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
 		symbolTable = new SymbolTable(null); // Initialize symbol table
 		System.out.println("Symbol table created");
-	}
-
-	public void exitCmdReturn(AMZ_syntParser.CmdReturnContext ctx) {
-
 	}
 
 	public void exitValue(AMZ_syntParser.ValueContext ctx) {
@@ -125,6 +123,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		} else {
 			String type = ctx.type().getText();
 			int ruleIndex = ctx.getParent().getRuleIndex();
+			//TODO usar productionNames
 			boolean initialized = (ctx.getParent().getRuleIndex() == 23);
 			if (ruleIndex == 33 || ruleIndex == 23) {
 				symbol = new VariableSymbol(type, initialized, size);
@@ -187,7 +186,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
 		// symbolTable = symbolTable.parent;
-		String pName = productionName.get(ctx.getParent());
+		// String pName = productionNames.get(ctx.getParent());
 		// System.out.println(pName);
 
 	}
@@ -602,5 +601,30 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 
 	}
+
+
+	public void exitCmdReturn(AMZ_syntParser.CmdReturnContext ctx) {
+		ParserRuleContext c = ctx;
+		while(c != null && productionNames.get(c) != "function_block") {
+			c = c.getParent();
+		}
+		if (c == null) {
+			return;
+		}
+		Type returnType = Type.VOID;
+		if (ctx.expression() != null) {
+			returnType = types.get(ctx.expression());
+			//getarray
+		}
+		AMZ_syntParser.Function_blockContext funcCtx = (AMZ_syntParser.Function_blockContext) c;
+
+		Type functionType = types.get(funcCtx.declaration());
+
+		//TODO CHECK TYPES
+		System.out.println(returnType);
+		System.out.println(functionType);
+
+	}
+
 
 }
