@@ -37,12 +37,21 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	//anotacoes
 	private ParseTreeProperty<Type> types = new ParseTreeProperty<>();
+	private ParseTreeProperty<String> productionName = new ParseTreeProperty<>();
 	// private ParseTreeProperty<String> id = new ParseTreeProperty<>();
 	private ParseTreeProperty<Integer> sizes = new ParseTreeProperty<>();
+
+	public void enterFunction_block(AMZ_syntParser.Function_blockContext ctx) {
+		productionName.put(ctx, "function_block");
+	}
 
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
 		symbolTable = new SymbolTable(null); // Initialize symbol table
 		System.out.println("Symbol table created");
+	}
+
+	public void exitCmdReturn(AMZ_syntParser.CmdReturnContext ctx) {
+
 	}
 
 	public void exitValue(AMZ_syntParser.ValueContext ctx) {
@@ -176,9 +185,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbolTable = symbolTable.parent;
 	}
 
-	// public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
-	// 	// symbolTable = symbolTable.parent;
-	// }
+	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+		// symbolTable = symbolTable.parent;
+		String pName = productionName.get(ctx.getParent());
+		// System.out.println(pName);
+
+	}
 
 	// public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
 	// 	symbolTable = symbolTable.parent;
