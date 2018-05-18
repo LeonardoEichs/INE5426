@@ -162,13 +162,13 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbolTable = symbolTable.parent;
 	}
 
-	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
-		// symbolTable = symbolTable.parent;
-	}
+	// public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+	// 	// symbolTable = symbolTable.parent;
+	// }
 
-	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
-		symbolTable = symbolTable.parent;
-	}
+	// public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
+	// 	symbolTable = symbolTable.parent;
+	// }
 
 	private boolean requireNotArray(Integer size, Integer line) {
 		if (size == null || size.intValue() != -1) {
@@ -201,10 +201,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 
 	}
-
-	public void exitFor_block(AMZ_syntParser.For_blockContext ctx) {
-		symbolTable = symbolTable.parent;
-	}
+	//
+	// public void exitFor_block(AMZ_syntParser.For_blockContext ctx) {
+	// 	symbolTable = symbolTable.parent;
+	// }
 
 	public void exitType(AMZ_syntParser.TypeContext ctx) {
 		if (ctx.DOUBLE() != null) {
@@ -239,7 +239,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 	}
@@ -252,7 +252,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 	}
@@ -267,7 +267,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 	}
@@ -309,7 +309,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 		types.put(ctx, Type.BOOLEAN);
@@ -334,7 +334,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 	}
@@ -358,7 +358,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
-		if (!requireNotArray(size0, line) && !requireNotArray(size1, line)) {
+		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
 	}
@@ -484,5 +484,44 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
     	// System.out.println(param.size());
 	}
 
+	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
+		Type type = types.get(ctx.expression());
+		int line = ctx.getStart().getLine();
+		if (type != Type.BOOLEAN) {
+			System.out.println("Erro na linha " + line + ":");
+			System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
+		}
+		Integer size = sizes.get(ctx.expression());
+		requireNotArray(size, line);
+
+	}
+
+	public void exitFor_block(AMZ_syntParser.For_blockContext ctx) {
+		if (ctx.expression() != null) {
+			Type type = types.get(ctx.expression());
+			int line = ctx.getStart().getLine();
+			if (type != Type.BOOLEAN) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
+			}
+			Integer size = sizes.get(ctx.expression());
+			requireNotArray(size, line);
+		}
+	}
+
+	public void exitIf_block(AMZ_syntParser.If_blockContext ctx) {
+		int length = ctx.expression().size();
+		for (int i = 0; i < length; i++) {
+			Type type = types.get(ctx.expression(i));
+			int line = ctx.expression(i).getStart().getLine();
+			if (type != Type.BOOLEAN) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
+			}
+			Integer size = sizes.get(ctx.expression(i));
+			requireNotArray(size, line);
+		}
+
+	}
 
 }

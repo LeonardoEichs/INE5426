@@ -12,9 +12,9 @@ import_file: IMPORT STRING_LITERAL SEMICO ;
  * COMMON:
  */
 
-declaration : type ID array_position? ;
-type : (INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT) ;
-array_position : LSQUARE INTEGER RSQUARE ;
+declaration : type ID array_position? ; //ok
+type : (INT | BOOLEAN | STRING | DOUBLE | VOID | OBJECT) ; //ok
+array_position : LSQUARE INTEGER RSQUARE ; //ok
 
 /*
  * EXPRESSION:
@@ -32,20 +32,20 @@ logic_binary_op_lower_prec : OR ;
 
 // higher precedence rules come first
 expression
-  : LPAREN expression RPAREN #ExpParen
+  : LPAREN expression RPAREN #ExpParen //ok
   | (value | ID | function_call) array_position? object_id? #ExpExit
-  | unary_arithm_operator expression #ExpUnaryArithm
-  | unary_bool_operator expression #ExpUnaryBool
-  | expression  arithmetic_binary_op_higher_prec   expression #ExpBinArithmH
-  | expression  arithmetic_binary_op_lower_prec    expression #ExpBinArithmL
-  | expression  comparison_op_higher_prec          expression #ExpBinCompH
-  | expression  comparison_op_lower_prec           expression #ExpBinCompL
-  | expression  logic_binary_op_higher_prec        expression #ExpBinLogicH
-  | expression  logic_binary_op_lower_prec         expression #ExpBinLogicL
+  | unary_arithm_operator expression #ExpUnaryArithm //ok
+  | unary_bool_operator expression #ExpUnaryBool //ok
+  | expression  arithmetic_binary_op_higher_prec   expression #ExpBinArithmH //ok
+  | expression  arithmetic_binary_op_lower_prec    expression #ExpBinArithmL //ok
+  | expression  comparison_op_higher_prec          expression #ExpBinCompH //ok
+  | expression  comparison_op_lower_prec           expression #ExpBinCompL //ok
+  | expression  logic_binary_op_higher_prec        expression #ExpBinLogicH //ok
+  | expression  logic_binary_op_lower_prec         expression #ExpBinLogicL //ok
   ;
 
 
-value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_literal | boolean_value ;
+value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_literal | boolean_value ; //ok
 boolean_value : TRUE | FALSE;
 object_id : DOT ID array_position? object_id? ;
 
@@ -53,9 +53,9 @@ function_call : ID (LPAREN arguments RPAREN) ;
 arguments : (expression (COMMA expression)*)? ;
 
 object_literal : LCURLY (object_element (COMMA object_element)*)? RCURLY ;
-object_element : declaration COLON expression ;
+object_element : declaration COLON expression ; //ok
 
-array_literal : LSQUARE (expression (COMMA expression)*)? RSQUARE;
+array_literal : LSQUARE (expression (COMMA expression)*)? RSQUARE; //ok
 
 /*
  * COMMANDS:
@@ -73,13 +73,13 @@ simple_command
 block_command : while_block | if_block | for_block | switch_block;
 command_block : LCURLY command* RCURLY;
 
-while_block : WHILE LPAREN expression RPAREN command_block ;
+while_block : WHILE LPAREN expression RPAREN command_block ; //ok
 
-for_block : FOR LPAREN simple_command? SEMICO expression? SEMICO simple_command? RPAREN command_block ;
+for_block : FOR LPAREN simple_command? SEMICO expression? SEMICO simple_command? RPAREN command_block ; //ok
 
 if_block : IF LPAREN expression RPAREN command_block
   (ELSE IF LPAREN expression RPAREN command_block)*
-  (ELSE command_block)? ;
+  (ELSE command_block)? ; //ok
 
 switch_block : SWITCH LPAREN expression RPAREN
   LCURLY case_block* default_block case_block* RCURLY;
