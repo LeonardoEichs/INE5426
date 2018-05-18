@@ -24,6 +24,13 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			return this.name;
 	 	}
 
+	 	public static Type getEnumByString(String s){
+     		for(Type e : Type.values()){
+				if(s == e.name) return e;
+		     }
+      		return null;
+  		}
+
 	}
 
 	public SymbolTable symbolTable;
@@ -146,6 +153,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type1 = types.get(ctx.expression());
 		Integer size0 = sizes.get(ctx.declaration());
 		Integer size1 = sizes.get(ctx.expression());
+
 		if (size0 != null && size1 != null && !size0.equals(size1)) {
 			System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
 			String strSize0 = size0 == -1 ? "Não array" : "Array de tamanho " + size0;
@@ -410,7 +418,24 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			types.put(ctx, types.get(ctx.value()));
 			sizes.put(ctx, sizes.get(ctx.value()));
 		} else if (ctx.ID() != null) {
+			Symbol symbol = symbolTable.lookup(ctx.ID().getText());
+			if (symbol == null) {
+				System.out.println("Variável " + ctx.ID() + " não declarada.");
+				return;
+			}
 
+			Type type = Type.getEnumByString(symbol.valueType.toString());
+			
+			types.put(ctx, type);
+			sizes.put(ctx, symbol.size);
+
+
+			if (!((VariableSymbol)symbol).initialized) {;
+				System.out.println("Variável " + ctx.ID() + " não inicializada.");
+				return;
+			}
+			// if (symbol.type != ctx)
+			// System.out.println(ctx.ID());
 		}
 	}
 
