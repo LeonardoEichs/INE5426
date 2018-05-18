@@ -8,7 +8,7 @@ public class SymbolTable extends Symbol {
     public SymbolTable parent; // References parent table
 
     public SymbolTable(SymbolTable parent) {
-        super(Symbol.SymbolType.OBJECT);
+        super(Symbol.SymbolType.OBJECT, -1);
         this.parent = parent;
     }
 
@@ -22,7 +22,7 @@ public class SymbolTable extends Symbol {
 
     public void printTable() {
         for(String id : symbols.keySet()) {
-            System.out.println(id + " " +  symbols.get(id).type + " " + symbols.get(id).valueType);
+            System.out.println(id + " " +  symbols.get(id).type + " " + symbols.get(id).valueType + " " + symbols.get(id).size);
         }
     }
 

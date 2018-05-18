@@ -82,8 +82,16 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void exitDeclaration(AMZ_syntParser.DeclarationContext ctx) {
 		String id = ctx.ID().getText();
-
 		Symbol symbol = symbolTable.lookup(id);
+
+
+		types.put(ctx, types.get(ctx.type()));
+		Integer size = -1;
+		if (ctx.array_position() != null) {
+			size = sizes.get(ctx.array_position());
+		}
+		sizes.put(ctx, size);
+
 		//verifica se o simbolo(ID) ja ta na tabela de simbolos se tiver printa erro semantico e retorna
 		if (symbol != null) {
 			switch (symbol.type) {
@@ -99,18 +107,16 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				}
 				return;
 		} else {
-			// String type = ctx.type().getText();
-			symbol = new Symbol(Symbol.SymbolType.VARIABLE);
+			String type = ctx.type().getText();
+			int ruleIndex = ctx.getParent().getRuleIndex();
+			boolean initialized = (ctx.getParent().getRuleIndex() == 23);
+			if (ruleIndex == 33 || ruleIndex == 23) {
+				symbol = new VariableSymbol(type, initialized, size);
+			}
 			symbolTable.put(id, symbol);
 		}
 
-		types.put(ctx, types.get(ctx.type()));
-		Integer size = -1;
-		if (ctx.array_position() != null) {
-			size = sizes.get(ctx.array_position());
-		}
-		sizes.put(ctx, size);
-		// symbolTable.printTable();
+
 	}
 
 	public void exitArray_position(AMZ_syntParser.Array_positionContext ctx) {

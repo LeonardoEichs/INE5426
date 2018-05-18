@@ -9,14 +9,12 @@ public class FunctionSymbol extends Symbol {
 	// Lista com tipos dos parametros e tamanho de cada parametro
 	// Precisa do tipo e tamanho do retorno
 	public String functionType;
-	public Integer returnLength;
 
-	public FunctionSymbol(String functionType, ArrayList<String> paramType, ArrayList<Integer> paramSize, Integer returnLength) {
-		super(Symbol.SymbolType.FUNCTION);
+	public FunctionSymbol(String functionType, ArrayList<String> paramType, ArrayList<Integer> paramSize, Integer size) {
+		super(Symbol.SymbolType.FUNCTION, size);
 		this.functionType = functionType;
 		this.paramType = paramType;
 		this.paramSize = paramSize;
-		this.returnLength = returnLength;
 		setFunctionType();
 	}
 
