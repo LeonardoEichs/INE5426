@@ -82,9 +82,9 @@ if_block : IF LPAREN expression RPAREN command_block
   (ELSE command_block)? ; //ok
 
 switch_block : SWITCH LPAREN expression RPAREN
-  LCURLY case_block* default_block case_block* RCURLY;
-case_block : CASE LPAREN expression RPAREN command_block;
-default_block : DEFAULT command_block;
+  LCURLY case_block* default_block RCURLY; //ok
+case_block : CASE LPAREN expression RPAREN command_block; //ok
+default_block : DEFAULT command_block; //ok
 
 function_block : declaration LPAREN parameters RPAREN command_block ;
 parameters : (declaration (COMMA declaration)*)? ;

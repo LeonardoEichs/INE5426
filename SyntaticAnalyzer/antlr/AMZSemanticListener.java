@@ -425,7 +425,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
-			
+
 			types.put(ctx, type);
 			sizes.put(ctx, symbol.size);
 
@@ -550,6 +550,42 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
 			}
 			Integer size = sizes.get(ctx.expression(i));
+			requireNotArray(size, line);
+		}
+
+	}
+
+	public void exitCase_block(AMZ_syntParser.Case_blockContext ctx) {
+		int line = ctx.getStart().getLine();
+		types.put(ctx, types.get(ctx.expression()));
+		Integer size = sizes.get(ctx.expression());
+		requireNotArray(size, line);
+	}
+
+	public void exitSwitch_block(AMZ_syntParser.Switch_blockContext ctx) {
+		Type type = types.get(ctx.expression());
+		int line = ctx.getStart().getLine();
+		if ( type != Type.BOOLEAN
+			&& type != Type.INT
+			&& type != Type.DOUBLE
+			&& type != Type.STRING) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Tipo " + type + " não permitido no switch.");
+				return;
+		}
+		Integer size = sizes.get(ctx.expression());
+		requireNotArray(size, line);
+
+		int length = ctx.case_block().size();
+		for (int i = 0; i < length; i++) {
+			Type caseType = types.get(ctx.case_block(i));
+			line = ctx.case_block(i).getStart().getLine();
+			if (caseType != type) {
+				System.out.println("Erro na linha " + line + ":");
+				System.out.println("Expressão com tipo incompatível. Recebido: "
+					+ caseType + ". Esperava-se: " + type + '.');
+			}
+			size = sizes.get(ctx.expression());
 			requireNotArray(size, line);
 		}
 
