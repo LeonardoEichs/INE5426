@@ -408,5 +408,38 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	public void exitObject_element(AMZ_syntParser.Object_elementContext ctx) {
+		Type type0 = types.get(ctx.declaration());
+		Type type1 = types.get(ctx.expression());
+		int line = ctx.getStart().getLine();
+
+		if (type0 != type1) {
+			System.out.println("Erro na linha " + line + ":");
+			System.out.println("Tipo inválido. Esperava-se " + type0 + ". Recebido: " + type1 + ".");
+		}
+
+		Integer size0 = sizes.get(ctx.declaration());
+		Integer size1 = sizes.get(ctx.expression());
+
+
+		if (size0 != null && size1 != null && !size0.equals(size1)) {
+			System.out.println("Erro na linha " + line + ":");
+			String strSize0 = size0 == -1 ? "Não array" : "Array de tamanho " + size0;
+			String strSize1 = size1 == -1 ? "Não array" : "Array de tamanho " + size1;
+			System.out.println("Atribuição com tamanho incompatível. Recebido: "
+				+ strSize1 + ". Esperava-se: " + strSize0 + '.');
+		}
+	}
+
+	public void enterObject_literal(AMZ_syntParser.Object_literalContext ctx) {
+		symbolTable = new SymbolTable(symbolTable);
+	}
+
+	public void exitObject_literal(AMZ_syntParser.Object_literalContext ctx) {
+		SymbolTable object = symbolTable;
+		symbolTable = symbolTable.parent;
+		
+
+	}
 
 }
