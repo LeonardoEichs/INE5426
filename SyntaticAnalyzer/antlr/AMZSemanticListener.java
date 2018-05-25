@@ -107,6 +107,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		sizes.put(ctx, size);
 
 		//verifica se o simbolo(ID) ja ta na tabela de simbolos se tiver printa erro semantico e retorna
+
 		if (symbol != null) {
 			switch (symbol.type) {
 				case VARIABLE:
@@ -122,17 +123,33 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				return;
 		} else {
 			String type = ctx.type().getText();
-			int ruleIndex = ctx.getParent().getRuleIndex();
-			//TODO usar productionNames
-			boolean initialized = (ctx.getParent().getRuleIndex() == 23);
-			if (ruleIndex == 33 || ruleIndex == 23) {
-				symbol = new VariableSymbol(type, initialized, size);
+
+			if (productionNames.get(ctx) != null) {
+				String rule = productionNames.get(ctx);
+				boolean initialized = true;
+
+				if (rule.equals("CmdDecl")) {
+					initialized = false;
+				}
+
+
+				if (!rule.equals("function_block")) {
+					symbol = new VariableSymbol(type, initialized, size);
+				}
+				
+				symbolTable.put(id, symbol);
 			}
-			symbolTable.put(id, symbol);
 		}
-
-
 	}
+
+ 	public void enterCmdDeclAttrib(AMZ_syntParser.CmdDeclAttribContext ctx) {
+ 		productionNames.put(ctx.declaration(), "CmdDeclAttrib");
+ 	}
+
+ 	public void enterCmdDecl(AMZ_syntParser.CmdDeclContext ctx) {
+ 		productionNames.put(ctx.declaration(), "CmdDecl");	
+ 	}
+
 
 	public void exitArray_position(AMZ_syntParser.Array_positionContext ctx) {
 		Integer size = Integer.parseInt(ctx.INTEGER().getText());
@@ -512,6 +529,14 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
     }
 
     // parameters : (declaration (COMMA declaration)*)? ;
+
+    public void enterParameters(AMZ_syntParser.ParametersContext ctx) {
+		int size = ctx.declaration().size();
+		for(int i = 0; i < size; i++) {
+			productionNames.put(ctx.declaration(i), "parameters");
+		}
+	}
+
 	public void exitParameters(AMZ_syntParser.ParametersContext ctx) {
 		int size = ctx.declaration().size();
 		for(int i = 0; i < size; i++) {
@@ -623,6 +648,19 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		//TODO CHECK TYPES
 		System.out.println(returnType);
 		System.out.println(functionType);
+
+	}
+
+	public void enterWhile_block(AMZ_syntParser.While_blockContext ctx) {
+		productionNames.put(ctx, "while_block");
+	}
+
+	public void enterFor_block(AMZ_syntParser.For_blockContext ctx) {
+		productionNames.put(ctx, "for_block");
+	}
+
+	public void exitCmdBreak(AMZ_syntParser.CmdBreakContext ctx) {
+		System.out.println(productionNames.get(ctx));
 
 	}
 
