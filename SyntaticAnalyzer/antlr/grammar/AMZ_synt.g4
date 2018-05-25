@@ -67,7 +67,7 @@ simple_command
   | declaration ASSIGN expression #CmdDeclAttrib
   | declaration #CmdDecl
   | ID array_position? object_id? ASSIGN expression #CmdAttrib
-  | BREAK #CmdBreak
+  | BREAK #CmdBreak // ok
   | RETURN expression? #CmdReturn
   ;
 block_command : while_block | if_block | for_block | switch_block;

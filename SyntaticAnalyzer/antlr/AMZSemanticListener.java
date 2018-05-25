@@ -449,8 +449,17 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		} else if (ctx.ID() != null) {
 			Symbol symbol = symbolTable.lookup(ctx.ID().getText());
 			if (symbol == null) {
-				System.out.println("Variável " + ctx.ID() + " não declarada.");
-				return;
+				if (symbolTable.parent != null) { // Verifica se está no escopo da tabela pai
+					symbol = symbolTable.parent.lookup(ctx.ID().getText());
+					if (symbol == null) {
+						System.out.println("Variável " + ctx.ID() + " não declarada.");
+						return;	
+					}
+
+				} else {
+					System.out.println("Variável " + ctx.ID() + " não declarada.");
+					return;
+				}
 			}
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
