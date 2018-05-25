@@ -131,8 +131,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				if (rule.equals("CmdDecl")) {
 					initialized = false;
 				}
-
-
 				if (!rule.equals("function_block")) {
 					symbol = new VariableSymbol(type, initialized, size);
 				}
@@ -195,6 +193,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void enterBlock_command(AMZ_syntParser.Block_commandContext ctx) {
 		symbolTable = new SymbolTable(symbolTable);
+		productionNames.put(ctx, "block_command");
+
 	}
 
 	public void exitBlock_command(AMZ_syntParser.Block_commandContext ctx) {
@@ -304,6 +304,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type0 = types.get(ctx.expression(0));
 		Type type1 = types.get(ctx.expression(1));
 		int line = ctx.getStart().getLine();
+		// System.out.println(ctx.getText());
 		if (checkNumberBinType(type0, type1, line) != null) {
 			types.put(ctx, Type.BOOLEAN);
 		}
@@ -551,6 +552,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
     	// System.out.println(param.size());
 	}
 
+
 	public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
 		Type type = types.get(ctx.expression());
 		int line = ctx.getStart().getLine();
@@ -659,10 +661,21 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		productionNames.put(ctx, "for_block");
 	}
 
+
 	public void exitCmdBreak(AMZ_syntParser.CmdBreakContext ctx) {
-		System.out.println(productionNames.get(ctx));
+		ParserRuleContext c = ctx;
+		while(c != null && productionNames.get(c) != "block_command") {
+			c = c.getParent();
+		}
+		if (c == null) {
+			System.out.println("Break fora de while ou loop");
+			return;
+		}
 
+		AMZ_syntParser.Block_commandContext blockCtx = (AMZ_syntParser.Block_commandContext) c;
+		if (blockCtx.for_block() == null && blockCtx.while_block() == null) {
+			System.out.println("Break fora de while/for loop");
+			return;
+		}
 	}
-
-
 }
