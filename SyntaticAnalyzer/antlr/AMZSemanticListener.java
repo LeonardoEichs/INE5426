@@ -191,6 +191,54 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	// ID array_position? object_id? ASSIGN expression
+	public void exitCmdAttrib(AMZ_syntParser.CmdAttribContext ctx) {
+		String result = ctx.ID().getText();
+		Symbol symbol = symbolTable.lookup(result);
+		// Checa se a variável foi declarada
+		if (symbol == null) {
+			if (symbolTable.parent != null) {
+				symbol = symbolTable.parent.lookup(result);
+				if (symbol == null) {
+					System.out.println("Variável " + result + " não declarada.");
+					return;					
+				}
+			} else {
+				System.out.println("Variável " + result + " não declarada.");
+				return;
+			}
+		}
+		// Verifica tipos
+		Type type0 = Type.getEnumByString(symbol.valueType.toString());
+		Type type1 = types.get(ctx.expression());
+		Integer size0 = symbol.size;
+		Integer size1 = sizes.get(ctx.expression());
+
+		if (ctx.array_position() == null) {
+			if (size0 != null && size1 != null && !size0.equals(size1)) {
+				System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+				String strSize0 = size0 == -1 ? "Não array" : "Array de tamanho " + size0;
+				String strSize1 = size1 == -1 ? "Não array" : "Array de tamanho " + size1;
+				System.out.println("Atribuição com tamanho incompatível. Recebido: "
+					+ strSize1 + ". Esperava-se: " + strSize0 + '.');
+			} 
+		} else { // acesso a indice de array
+			Integer index = Integer.parseInt(ctx.array_position().INTEGER().getText());
+			if (index >= size0) {
+				System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+				System.out.println("Acesso a indice não permitido. Recebido: "
+					+ index + ". Tamanho do array: " + size0);
+			}
+		}
+		
+		if (type0 != type1) {
+			System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
+			System.out.println("Atribuição com tipo incompatível. Recebido: "
+				+ type1 + ". Esperava-se: " + type0 + '.');
+		}
+
+	}
+
 	public void enterBlock_command(AMZ_syntParser.Block_commandContext ctx) {
 		symbolTable = new SymbolTable(symbolTable);
 		productionNames.put(ctx, "block_command");
@@ -687,4 +735,5 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			return;
 		}
 	}
+
 }
