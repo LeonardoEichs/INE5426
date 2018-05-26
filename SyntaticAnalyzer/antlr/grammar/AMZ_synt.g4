@@ -68,7 +68,7 @@ simple_command
   | declaration #CmdDecl
   | ID array_position? object_id? ASSIGN expression #CmdAttrib
   | BREAK #CmdBreak // ok
-  | RETURN expression? #CmdReturn
+  | RETURN expression? #CmdReturn // ok
   ;
 block_command : while_block | if_block | for_block | switch_block;
 command_block : LCURLY command* RCURLY;

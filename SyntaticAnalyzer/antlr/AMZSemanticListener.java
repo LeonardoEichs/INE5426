@@ -230,7 +230,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					+ index + ". Tamanho do array: " + size0);
 			}
 		}
-		
+
 		if (type0 != type1) {
 			System.out.println("Erro na linha " + ctx.getStart().getLine() + ":");
 			System.out.println("Atribuição com tipo incompatível. Recebido: "
@@ -511,7 +511,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
-
 			types.put(ctx, type);
 			sizes.put(ctx, symbol.size);
 
@@ -583,7 +582,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
     	Symbol symbol = new FunctionSymbol(type, paramTypes, paramSizes, size);
     	symbolTable.put(id, symbol);
     	symbolTable.printTable();
-
+	   	// System.out.println(ctx.getRuleContext().getText());
     }
 
     // parameters : (declaration (COMMA declaration)*)? ;
@@ -704,10 +703,20 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		Type functionType = types.get(funcCtx.declaration());
 
-		//TODO CHECK TYPES
-		System.out.println(returnType);
-		System.out.println(functionType);
+		if (returnType != functionType) {
+			System.out.println("Tipo de retorno incompatível. Recebido: " + returnType
+				+ ". Esperava-se: "  + functionType);	
+		}
 
+	}
+
+	public void exitFunc_command_block(AMZ_syntParser.Func_command_blockContext ctx) {
+		int size = ctx.command().size() - 1;
+		ParserRuleContext ret = (ParserRuleContext)ctx.command(size).getChild(0); // return expression;
+		if (!ret.getChild(0).getText().equals("return")) { // Verifica se tem retorno
+			System.out.println("Erro: função deve terminar com comando de retorno.");
+			return;
+		}
 	}
 
 	public void enterWhile_block(AMZ_syntParser.While_blockContext ctx) {
@@ -717,7 +726,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void enterFor_block(AMZ_syntParser.For_blockContext ctx) {
 		productionNames.put(ctx, "for_block");
 	}
-
 
 	public void exitCmdBreak(AMZ_syntParser.CmdBreakContext ctx) {
 		ParserRuleContext c = ctx;
