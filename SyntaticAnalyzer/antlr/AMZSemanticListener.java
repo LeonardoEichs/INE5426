@@ -44,6 +44,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	private ParseTreeProperty<Integer> sizes = new ParseTreeProperty<>();
 
 	public void enterFunction_block(AMZ_syntParser.Function_blockContext ctx) {
+		symbolTable = new SymbolTable(symbolTable);
 		productionNames.put(ctx, "function_block");
 	}
 
@@ -252,17 +253,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbolTable = symbolTable.parent;
 	}
 
-	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
-		// symbolTable = symbolTable.parent;
-		// String pName = productionNames.get(ctx.getParent());
-		// System.out.println(pName);
-
-	}
-
-	// public void exitWhile_block(AMZ_syntParser.While_blockContext ctx) {
-	// 	symbolTable = symbolTable.parent;
-	// }
-
+	
 	private boolean requireNotArray(Integer size, Integer line) {
 		if (size == null || size.intValue() != -1) {
 			System.out.println("Erro na linha " + line + ":");
@@ -294,10 +285,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 
 	}
-	//
-	// public void exitFor_block(AMZ_syntParser.For_blockContext ctx) {
-	// 	symbolTable = symbolTable.parent;
-	// }
 
 	public void exitType(AMZ_syntParser.TypeContext ctx) {
 		if (ctx.DOUBLE() != null) {
@@ -320,7 +307,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			sizes.put(ctx, -1);
 		}
 
-		// System.out.println(ctx.getText() + " " + types.get(ctx));
 	}
 
 	// expression  arithmetic_binary_op_higher_prec    expression
@@ -496,13 +482,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitFunction_call(AMZ_syntParser.Function_callContext ctx) {
 		String id = ctx.ID().getText();
 		int line = ctx.getStart().getLine();
-
-		if (symbolTable.lookup(id) == null) {
+		if (symbolTable.parent.lookup(id) == null) {
 			System.out.println("Função não definida.");
 			return;
 		}
-		ArrayList<String> paramTypes = ((FunctionSymbol) symbolTable.lookup(id)).paramType;
-		ArrayList<Integer> paramSizes = ((FunctionSymbol) symbolTable.lookup(id)).paramSize;
+		ArrayList<String> paramTypes = ((FunctionSymbol) symbolTable.parent.lookup(id)).paramType;
+		ArrayList<Integer> paramSizes = ((FunctionSymbol) symbolTable.parent.lookup(id)).paramSize;
 		int callArgSize = ctx.arguments().expression().size();
 		// Checa numero de argumentos
 		if (callArgSize != paramTypes.size()) {
@@ -605,9 +590,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			// if (symbol.type != ctx)
 			// System.out.println(ctx.ID());
 		} else if (ctx.function_call() != null) {
-			Symbol symbol = symbolTable.lookup(ctx.function_call().ID().getText());
+			Symbol symbol = symbolTable.parent.lookup(ctx.function_call().ID().getText());
 			Type type = Type.getEnumByString(symbol.valueType.toString());
-			System.out.println(type);
 			types.put(ctx, type);
 			sizes.put(ctx, symbol.size);
 		}
@@ -653,6 +637,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	// function_block : declaration LPAREN parameters RPAREN command_block ;
     public void exitFunction_block(AMZ_syntParser.Function_blockContext ctx) {
+    	
+    	symbolTable = symbolTable.parent;
     	String type = ctx.declaration().type().getText();
     	String id = ctx.declaration().ID().getText();
     	Integer size = sizes.get(ctx.declaration());
@@ -670,7 +656,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
     	Symbol symbol = new FunctionSymbol(type, paramTypes, paramSizes, size);
     	symbolTable.put(id, symbol);
-	   	// System.out.println(ctx.getRuleContext().getText());
+
+
     }
 
     // parameters : (declaration (COMMA declaration)*)? ;
