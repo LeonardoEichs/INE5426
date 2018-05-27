@@ -49,8 +49,8 @@ value : DOUBLE_LITERAL | INTEGER | STRING_LITERAL | object_literal | array_liter
 boolean_value : TRUE | FALSE;
 object_id : DOT ID array_position? object_id? ;
 
-function_call : ID (LPAREN arguments RPAREN) ;
-arguments : (expression (COMMA expression)*)? ;
+function_call : ID (LPAREN arguments RPAREN) ; // ok
+arguments : (expression (COMMA expression)*)? ; // ok
 
 object_literal : LCURLY (object_element (COMMA object_element)*)? RCURLY ;
 object_element : declaration COLON expression ; //ok
