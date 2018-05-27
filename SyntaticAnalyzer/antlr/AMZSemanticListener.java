@@ -171,6 +171,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	}
 
+	// declaration ASSIGN expression #CmdDeclAttrib
 	public void exitCmdDeclAttrib(AMZ_syntParser.CmdDeclAttribContext ctx) {
 		Type type0 = types.get(ctx.declaration());
 		Type type1 = types.get(ctx.expression());
@@ -604,8 +605,11 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			// if (symbol.type != ctx)
 			// System.out.println(ctx.ID());
 		} else if (ctx.function_call() != null) {
-			Type type = Type.getEnumByString(symbolTable.lookup(ctx.function_call().ID().getText()).valueType.toString());
-			
+			Symbol symbol = symbolTable.lookup(ctx.function_call().ID().getText());
+			Type type = Type.getEnumByString(symbol.valueType.toString());
+			System.out.println(type);
+			types.put(ctx, type);
+			sizes.put(ctx, symbol.size);
 		}
 	}
 
