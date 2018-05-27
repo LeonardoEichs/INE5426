@@ -236,6 +236,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			System.out.println("Atribuição com tipo incompatível. Recebido: "
 				+ type1 + ". Esperava-se: " + type0 + '.');
 		}
+		// Inicializa variável
+		symbolTable.put(ctx.ID().getText(), new VariableSymbol(symbol.valueType.toString(), true, size0));
 
 	}
 
@@ -400,6 +402,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 		Integer size0 = sizes.get(ctx.expression(0));
 		Integer size1 = sizes.get(ctx.expression(1));
+		// TODO: precisa?
 		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
 		}
@@ -488,6 +491,85 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		sizes.put(ctx, sizes.get(ctx.expression()));
 	}
 
+	// function_call : ID (LPAREN arguments RPAREN) ;
+	public void exitFunction_call(AMZ_syntParser.Function_callContext ctx) {
+		String id = ctx.ID().getText();
+		int line = ctx.getStart().getLine();
+
+		if (symbolTable.lookup(id) == null) {
+			System.out.println("Função não definida.");
+			return;
+		}
+		ArrayList<String> paramTypes = ((FunctionSymbol) symbolTable.lookup(id)).paramType;
+		ArrayList<Integer> paramSizes = ((FunctionSymbol) symbolTable.lookup(id)).paramSize;
+		int callArgSize = ctx.arguments().expression().size();
+		// Checa numero de argumentos
+		if (callArgSize != paramTypes.size()) {
+			System.out.print("Erro na linha " + line + ": ");
+			System.out.println("Número de argumentos incompatível");
+			return;
+		}
+		boolean error = false;
+		// Checa ordem dos tipos e tamanhos
+		for (int i = 0; i < callArgSize; i++) {
+			String callType = ctx.arguments().expression(i).getText();
+			String funcType = paramTypes.get(i);
+
+			if (isInteger(callType)) {
+				if (!funcType.equals("int")) {
+					error = true;
+				}
+			} else if (isDouble(callType)) {
+				if (!funcType.equals("double")) {
+					error = true;
+				}
+			} else if (callType.equals("true") || callType.equals("false")) {
+				if (!funcType.equals("boolean")) {
+					error = true;
+				}
+			} else if (callType.charAt(0) == '\"') {
+				if (!funcType.equals("string")) {
+					error = true;
+				}
+			} else { // id
+				if(symbolTable.lookup(callType) != null ) {
+					String symbType = symbolTable.lookup(callType).valueType.toString(); 
+					if(!symbType.equals(funcType)) {
+						System.out.print("Erro na linha " + line + ": ");
+						System.out.println("Tipo de argumento incompatível. Esperava-se: " + funcType
+							+ ". Recebido: " + symbType);
+						return;
+					}
+				}
+			}
+			if (error) {
+				System.out.print("Erro na linha " + line + ": ");
+				System.out.println("Tipo de argumento incompatível. Esperava-se: " + funcType);
+				return;
+			}
+		}
+	}
+
+	private static boolean isInteger(String str) {
+	    try {
+	        Integer.parseInt(str);
+	        return true;
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
+	}
+
+	private static boolean isDouble(String str) {
+	    try {
+	        Double.parseDouble(str);
+	        return true;
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
+	}
+
+
+
 	// expression : (value | ID | function_call) array_position? object_id? #ExpExit
 	public void exitExpExit(AMZ_syntParser.ExpExitContext ctx) {
 		//TODO object_id
@@ -521,6 +603,9 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 			// if (symbol.type != ctx)
 			// System.out.println(ctx.ID());
+		} else if (ctx.function_call() != null) {
+			Type type = Type.getEnumByString(symbolTable.lookup(ctx.function_call().ID().getText()).valueType.toString());
+			
 		}
 	}
 
@@ -581,7 +666,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
     	Symbol symbol = new FunctionSymbol(type, paramTypes, paramSizes, size);
     	symbolTable.put(id, symbol);
-    	symbolTable.printTable();
 	   	// System.out.println(ctx.getRuleContext().getText());
     }
 
@@ -644,6 +728,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
 			}
 			Integer size = sizes.get(ctx.expression(i));
+			// TODO: precisa disso?
 			requireNotArray(size, line);
 		}
 
