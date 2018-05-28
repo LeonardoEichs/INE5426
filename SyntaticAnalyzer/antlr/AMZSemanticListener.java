@@ -104,7 +104,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		String rule = productionNames.get(c);
 		Symbol symbol = st.lookup(id);
 		if (symbol == null) { // ve se esta em loop ou if
-			while(rule == "block_command" || rule == "CmdDeclAttrib" || rule == null) {
+			while (rule == "block_command" || rule == "CmdDeclAttrib" || rule == null) {
 				c = c.getParent();
 				rule = productionNames.get(c);
 				if (st.parent != null) {
@@ -228,7 +228,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				SymbolTable st = symbolTable;
 				ParserRuleContext c = ctx;
 				String rule = productionNames.get(c);
-				while(rule == "if_block" || rule == "block_command" || rule == null) {
+				while(rule == "if_block" || rule == "block_command" || rule == "while_block" || rule == null) {
 					c = c.getParent();
 					rule = productionNames.get(c);
 					if (st.parent != null) {
@@ -639,7 +639,9 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				SymbolTable st = symbolTable;
 				ParserRuleContext c = ctx;
 				String rule = productionNames.get(c);
-				while(rule == "if_block" || rule == "block_command" || rule == null) {
+				while(rule == "if_block" || rule == "block_command" 
+					|| rule == "while_block"
+					|| rule == null) {
 					c = c.getParent();
 					rule = productionNames.get(c);
 					st = st.parent;
@@ -653,7 +655,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					System.out.print("Erro na linha " + line + ": ");
 					System.out.println("Variável " + ctx.ID() + " não declarada.");
 					return;	
-				}			}
+				}
+			}
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
 			types.put(ctx, type);
