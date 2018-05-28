@@ -97,9 +97,27 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void exitDeclaration(AMZ_syntParser.DeclarationContext ctx) {
 		String id = ctx.ID().getText();
-		Symbol symbol = symbolTable.lookup(id);
 		int line = ctx.getStart().getLine();
 
+		SymbolTable st = symbolTable;
+		ParserRuleContext c = ctx;
+		String rule = productionNames.get(c);
+		Symbol symbol = st.lookup(id);
+		if (symbol == null) { // ve se esta em loop ou if
+			while(rule == "block_command" || rule == "CmdDeclAttrib" || rule == null) {
+				c = c.getParent();
+				rule = productionNames.get(c);
+				if (st.parent != null) {
+					st = st.parent;
+				}
+				if (st.lookup(ctx.ID().getText()) != null) {
+					break;
+				}
+			}
+			
+		}
+		symbol = st.lookup(id);
+		
 		types.put(ctx, types.get(ctx.type()));
 		Integer size = -1;
 		if (ctx.array_position() != null) {
@@ -129,7 +147,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			String type = ctx.type().getText();
 
 			if (productionNames.get(ctx) != null) {
-				String rule = productionNames.get(ctx);
+				 rule = productionNames.get(ctx);
 				boolean initialized = true;
 
 				if (rule.equals("CmdDecl")) {
@@ -181,6 +199,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type1 = types.get(ctx.expression());
 		Integer size0 = sizes.get(ctx.declaration());
 		Integer size1 = sizes.get(ctx.expression());
+		
 
 		if (size0 != null && size1 != null && !size0.equals(size1)) {
 			System.out.print("Erro na linha " + ctx.getStart().getLine() + ": ");
@@ -204,8 +223,24 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 		// Checa se a variável foi declarada
 		if (symbol == null) {
+
 			if (symbolTable.parent != null) {
-				symbol = symbolTable.parent.lookup(result);
+				SymbolTable st = symbolTable;
+				ParserRuleContext c = ctx;
+				String rule = productionNames.get(c);
+				while(rule == "if_block" || rule == "block_command" || rule == null) {
+					c = c.getParent();
+					rule = productionNames.get(c);
+					if (st.parent != null) {
+						st = st.parent;
+					}
+
+					if (st.lookup(ctx.ID().getText()) != null) {
+						break;
+					}
+				}
+				
+				symbol = st.lookup(result);
 				if (symbol == null) {
 					System.out.print("Erro na linha " + line + ": ");
 					System.out.println("Variável " + result + " não declarada.");
@@ -470,8 +505,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	// unary_bool_operator expression
 	public void exitExpUnaryBool(AMZ_syntParser.ExpUnaryBoolContext ctx) {
 		Type type = types.get(ctx.expression());
+		int line = ctx.getStart().getLine();
 		if (type != Type.BOOLEAN) {
-			System.out.println("Tipo esperado: boolean.");
+			System.out.print("Erro na linha " + line + ": ");
+			System.out.println("Recebido: " + ctx.expression().getText() + ". Tipo esperado: boolean.");
 			return;
 		} else {
 			types.put(ctx, Type.BOOLEAN);
@@ -489,13 +526,29 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitFunction_call(AMZ_syntParser.Function_callContext ctx) {
 		String id = ctx.ID().getText();
 		int line = ctx.getStart().getLine();
-		if (symbolTable.parent.lookup(id) == null) {
+
+		SymbolTable st = symbolTable;
+		ParserRuleContext c = ctx;
+		String rule = productionNames.get(c);
+		while(rule == "block_command" || rule == "CmdDeclAttrib" || rule == null) {
+			c = c.getParent();
+			rule = productionNames.get(c);
+			if (st.parent != null) {
+				st = st.parent;
+			}
+			if (st.lookup(ctx.ID().getText()) != null) {
+				break;
+			}
+		}
+
+		if (st.lookup(id) == null) {
 			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Função não definida.");
 			return;
 		}
-		ArrayList<String> paramTypes = ((FunctionSymbol) symbolTable.parent.lookup(id)).paramType;
-		ArrayList<Integer> paramSizes = ((FunctionSymbol) symbolTable.parent.lookup(id)).paramSize;
+
+		ArrayList<String> paramTypes = ((FunctionSymbol) st.lookup(id)).paramType;
+		ArrayList<Integer> paramSizes = ((FunctionSymbol) st.lookup(id)).paramSize;
 		int callArgSize = ctx.arguments().expression().size();
 		// Checa numero de argumentos
 		if (callArgSize != paramTypes.size()) {
@@ -526,8 +579,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					error = true;
 				}
 			} else { // id
-				if(symbolTable.lookup(callType) != null ) {
-					String symbType = symbolTable.lookup(callType).valueType.toString(); 
+				if(st.lookup(callType) != null ) {
+					String symbType = st.lookup(callType).valueType.toString(); 
 					if(!symbType.equals(funcType)) {
 						System.out.print("Erro na linha " + line + ": ");
 						System.out.println("Tipo de argumento incompatível. Esperava-se: " + funcType
@@ -567,27 +620,40 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	// expression : (value | ID | function_call) array_position? object_id? #ExpExit
 	public void exitExpExit(AMZ_syntParser.ExpExitContext ctx) {
 		int line = ctx.getStart().getLine();
+
 		//TODO object_id
 		if (ctx.value() != null) {
-			types.put(ctx, types.get(ctx.value()));
-			sizes.put(ctx, sizes.get(ctx.value()));
-		} else if (ctx.ID() != null) {
-			Symbol symbol = symbolTable.lookup(ctx.ID().getText());
-			if (symbol == null) {
-				if (symbolTable.parent != null) { // Verifica se está no escopo da tabela pai
-					symbol = symbolTable.parent.lookup(ctx.ID().getText());
-					if (symbol == null) {
-						System.out.print("Erro na linha " + line + ": ");
-						System.out.println("Variável " + ctx.ID() + " não declarada.");
-						return;	
-					}
-
-				} else {
+			if (ctx.array_position() != null) {
+				if (ctx.value().array_literal() == null) {
 					System.out.print("Erro na linha " + line + ": ");
-					System.out.println("Variável " + ctx.ID() + " não declarada.");
+					System.out.println("Array não permitido.");
 					return;
 				}
 			}
+			types.put(ctx, types.get(ctx.value()));
+			sizes.put(ctx, sizes.get(ctx.value()));
+		} else if (ctx.ID() != null) {
+
+			Symbol symbol = symbolTable.lookup(ctx.ID().getText());
+			if (symbol == null) {
+				SymbolTable st = symbolTable;
+				ParserRuleContext c = ctx;
+				String rule = productionNames.get(c);
+				while(rule == "if_block" || rule == "block_command" || rule == null) {
+					c = c.getParent();
+					rule = productionNames.get(c);
+					st = st.parent;
+					if (st.lookup(ctx.ID().getText()) != null) {
+						break;
+					}
+				}
+
+				symbol = st.lookup(ctx.ID().getText());
+				if (symbol == null) {
+					System.out.print("Erro na linha " + line + ": ");
+					System.out.println("Variável " + ctx.ID() + " não declarada.");
+					return;	
+				}			}
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
 			types.put(ctx, type);
@@ -609,6 +675,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				sizes.put(ctx, symbol.size);
 			}
 		}
+
 	}
 
 	public void exitObject_element(AMZ_syntParser.Object_elementContext ctx) {
