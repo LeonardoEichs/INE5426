@@ -114,11 +114,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					break;
 				}
 			}
-			
+
 		}
 		symbol = st.lookup(id);
-		
+
 		types.put(ctx, types.get(ctx.type()));
+		
 		Integer size = -1;
 		if (ctx.array_position() != null) {
 			size = sizes.get(ctx.array_position());
@@ -156,7 +157,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				if (!rule.equals("function_block")) {
 					symbol = new VariableSymbol(type, initialized, size);
 				}
-				
+
 				symbolTable.put(id, symbol);
 			}
 		}
@@ -167,7 +168,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
  	}
 
  	public void enterCmdDecl(AMZ_syntParser.CmdDeclContext ctx) {
- 		productionNames.put(ctx.declaration(), "CmdDecl");	
+ 		productionNames.put(ctx.declaration(), "CmdDecl");
  	}
 
 
@@ -199,7 +200,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type1 = types.get(ctx.expression());
 		Integer size0 = sizes.get(ctx.declaration());
 		Integer size1 = sizes.get(ctx.expression());
-		
+
 
 		if (size0 != null && size1 != null && !size0.equals(size1)) {
 			System.out.print("Erro na linha " + ctx.getStart().getLine() + ": ");
@@ -239,14 +240,14 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 						break;
 					}
 				}
-				
+
 				symbol = st.lookup(result);
 				if (symbol == null) {
 					System.out.print("Erro na linha " + line + ": ");
 					System.out.println("Variável " + result + " não declarada.");
-					return;					
+					return;
 				}
-			} else {				
+			} else {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Variável " + result + " não declarada.");
 				return;
@@ -265,7 +266,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				String strSize1 = size1 == -1 ? "Não array" : "Array de tamanho " + size1;
 				System.out.println("Atribuição com tamanho incompatível. Recebido: "
 					+ strSize1 + ". Esperava-se: " + strSize0 + '.');
-			} 
+			}
 		} else { // acesso a indice de array
 			Integer index = Integer.parseInt(ctx.array_position().INTEGER().getText());
 			if (index >= size0) {
@@ -295,7 +296,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbolTable = symbolTable.parent;
 	}
 
-	
+
 	private boolean requireNotArray(Integer size, Integer line) {
 		if (size == null || size.intValue() != -1) {
 			System.out.print("Erro na linha " + line + ": ");
@@ -580,7 +581,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				}
 			} else { // id
 				if(st.lookup(callType) != null ) {
-					String symbType = st.lookup(callType).valueType.toString(); 
+					String symbType = st.lookup(callType).valueType.toString();
 					if(!symbType.equals(funcType)) {
 						System.out.print("Erro na linha " + line + ": ");
 						System.out.println("Tipo de argumento incompatível. Esperava-se: " + funcType
@@ -639,7 +640,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				SymbolTable st = symbolTable;
 				ParserRuleContext c = ctx;
 				String rule = productionNames.get(c);
-				while(rule == "if_block" || rule == "block_command" 
+				while(rule == "if_block" || rule == "block_command"
 					|| rule == "while_block"
 					|| rule == null) {
 					c = c.getParent();
@@ -654,7 +655,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				if (symbol == null) {
 					System.out.print("Erro na linha " + line + ": ");
 					System.out.println("Variável " + ctx.ID() + " não declarada.");
-					return;	
+					return;
 				}
 			}
 
@@ -721,7 +722,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	// function_block : declaration LPAREN parameters RPAREN command_block ;
     public void exitFunction_block(AMZ_syntParser.Function_blockContext ctx) {
-    	
+
     	symbolTable = symbolTable.parent;
     	String type = ctx.declaration().type().getText();
     	String id = ctx.declaration().ID().getText();
@@ -849,7 +850,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitCmdReturn(AMZ_syntParser.CmdReturnContext ctx) {
 		ParserRuleContext c = ctx;
 		int line = ctx.getStart().getLine();
-		
+
 		while(c != null && productionNames.get(c) != "function_block") {
 			c = c.getParent();
 		}
@@ -868,7 +869,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		if (returnType != functionType) {
 			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Tipo de retorno incompatível. Recebido: " + returnType
-				+ ". Esperava-se: "  + functionType);	
+				+ ". Esperava-se: "  + functionType);
 		}
 
 	}
@@ -876,12 +877,16 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitFunc_command_block(AMZ_syntParser.Func_command_blockContext ctx) {
 		int size = ctx.command().size() - 1;
 		int line = ctx.getStart().getLine();
-		
-		ParserRuleContext ret = (ParserRuleContext)ctx.command(size).getChild(0); // return expression;
-		if (!ret.getChild(0).getText().equals("return")) { // Verifica se tem retorno
-			System.out.print("Erro na linha " + line + ": ");
-			System.out.println("Erro: função deve terminar com comando de retorno. ");
-			return;
+		AMZ_syntParser.Function_blockContext funcCtx = (AMZ_syntParser.Function_blockContext) ctx.getParent();
+		Type function_type = types.get(funcCtx.declaration());
+
+		if(function_type != Type.VOID) {
+			ParserRuleContext ret = (ParserRuleContext)ctx.command(size).getChild(0); // return expression;
+			if (!ret.getChild(0).getText().equals("return")) { // Verifica se tem retorno
+				System.out.print("Erro na linha " + line + ": ");
+				System.out.println("Erro: função deve terminar com comando de retorno. ");
+				return;
+			}
 		}
 	}
 
@@ -894,20 +899,20 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	}
 
 	public void enterIf_block(AMZ_syntParser.If_blockContext ctx) {
-		productionNames.put(ctx, "if_block");	
+		productionNames.put(ctx, "if_block");
 	}
 
 	public void enterSwitch_block(AMZ_syntParser.Switch_blockContext ctx) {
-		productionNames.put(ctx, "switch_block");	
+		productionNames.put(ctx, "switch_block");
 	}
 
 	public void exitCmdBreak(AMZ_syntParser.CmdBreakContext ctx) {
 		ParserRuleContext c = ctx;
 		AMZ_syntParser.Block_commandContext blockCtx;
 		int line = ctx.getStart().getLine();
-		
+
 		while(c != null && (productionNames.get(c) != "block_command"
-		 || productionNames.get(c) == "if_block" 
+		 || productionNames.get(c) == "if_block"
 		 || productionNames.get(c) == "switch_block")) {
 			c = c.getParent();
 			if (productionNames.get(c) == "block_command") {
@@ -916,18 +921,18 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				 	c = c.getParent();
 				 }
 			}
-		
+
 		}
 
 		if (c == null) {
-			System.out.print("Erro na linha " + line + ": ");	
+			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Break fora de while ou loop");
 			return;
 		}
 		blockCtx = (AMZ_syntParser.Block_commandContext) c;
 
 		if (blockCtx.for_block() == null && blockCtx.while_block() == null) {
-			System.out.print("Erro na linha " + line + ": ");	
+			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Break fora de while/for loop");
 			return;
 		}
