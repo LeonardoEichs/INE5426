@@ -119,7 +119,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbol = st.lookup(id);
 
 		types.put(ctx, types.get(ctx.type()));
-		
+
 		Integer size = -1;
 		if (ctx.array_position() != null) {
 			size = sizes.get(ctx.array_position());
@@ -621,9 +621,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	// expression : (value | ID | function_call) array_position? object_id? #ExpExit
 	public void exitExpExit(AMZ_syntParser.ExpExitContext ctx) {
 		int line = ctx.getStart().getLine();
-
+		int size = -1;
 		//TODO object_id
 		if (ctx.value() != null) {
+
 			if (ctx.array_position() != null) {
 				if (ctx.value().array_literal() == null) {
 					System.out.print("Erro na linha " + line + ": ");
@@ -632,7 +633,9 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				}
 			}
 			types.put(ctx, types.get(ctx.value()));
-			sizes.put(ctx, sizes.get(ctx.value()));
+			size = sizes.get(ctx.value());
+
+
 		} else if (ctx.ID() != null) {
 
 			Symbol symbol = symbolTable.lookup(ctx.ID().getText());
@@ -661,7 +664,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 			Type type = Type.getEnumByString(symbol.valueType.toString());
 			types.put(ctx, type);
-			sizes.put(ctx, symbol.size);
+			size = symbol.size;
 
 
 			if (!((VariableSymbol)symbol).initialized) {
@@ -671,14 +674,33 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 			// if (symbol.type != ctx)
 			// System.out.println(ctx.ID());
+
+
 		} else if (ctx.function_call() != null) {
+
 			Symbol symbol = symbolTable.parent.lookup(ctx.function_call().ID().getText());
 			if (symbol != null) {
 				Type type = Type.getEnumByString(symbol.valueType.toString());
 				types.put(ctx, type);
-				sizes.put(ctx, symbol.size);
+				size = symbol.size;
 			}
 		}
+
+		if (ctx.array_position() != null) {
+			if (size == -1) {
+				System.out.print("Erro na linha " + line + ": ");
+				System.out.println("Tentativa de acesso em posição de um não array.");
+				return;
+			}
+			int position = sizes.get(ctx.array_position());
+			if (position >= size) {
+				System.out.print("Erro na linha " + line + ": ");
+				System.out.println("Tentativa de acesso em posição fora do array.");
+				return;
+			}
+			size = -1;
+		}
+		sizes.put(ctx, size);
 
 	}
 
@@ -877,6 +899,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitFunc_command_block(AMZ_syntParser.Func_command_blockContext ctx) {
 		int size = ctx.command().size() - 1;
 		int line = ctx.getStart().getLine();
+		
 		AMZ_syntParser.Function_blockContext funcCtx = (AMZ_syntParser.Function_blockContext) ctx.getParent();
 		Type function_type = types.get(funcCtx.declaration());
 
