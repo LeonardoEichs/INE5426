@@ -35,6 +35,8 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	}
 
+	private String filepath;
+
 	public SymbolTable symbolTable;
 
 	//anotacoes
@@ -48,9 +50,37 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		productionNames.put(ctx, "function_block");
 	}
 
+	public AMZSemanticListener(String filepath) {
+		this.filepath = filepath;
+	}
+
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
+	}
+
+	public void exitImport_file(AMZ_syntParser.Import_fileContext ctx) {
+		String file = parseStringLiteral(ctx.STRING_LITERAL().getText());
+		String[] args = {file};
+		try {
+			SymbolTable st = (new Main()).parse(args, this.filepath);
+			symbolTable.importTable(st);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
 		symbolTable = new SymbolTable(null); // Initialize symbol table
 		System.out.println("Symbol table created");
+	}
+
+	private String parseStringLiteral(String literalTxt) {
+		return literalTxt.substring(1, literalTxt.length()-1)
+			.replace("\\\"", "\"")
+			.replace("\\\\", "\\")
+			.replace("\\r", "\r")
+			.replace("\\n", "\n")
+			.replace("\\t", "\t");
 	}
 
 	public void exitValue(AMZ_syntParser.ValueContext ctx) {
@@ -899,7 +929,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	public void exitFunc_command_block(AMZ_syntParser.Func_command_blockContext ctx) {
 		int size = ctx.command().size() - 1;
 		int line = ctx.getStart().getLine();
-		
+
 		AMZ_syntParser.Function_blockContext funcCtx = (AMZ_syntParser.Function_blockContext) ctx.getParent();
 		Type function_type = types.get(funcCtx.declaration());
 

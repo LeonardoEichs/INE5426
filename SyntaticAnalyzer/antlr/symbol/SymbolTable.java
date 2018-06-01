@@ -1,6 +1,7 @@
 package symbol;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SymbolTable extends Symbol {
 
@@ -23,6 +24,14 @@ public class SymbolTable extends Symbol {
     public void printTable() {
         for(String id : symbols.keySet()) {
             System.out.println(id + " " +  symbols.get(id).type + " " + symbols.get(id).valueType + " " + symbols.get(id).size);
+        }
+    }
+
+    public void importTable(SymbolTable another) {
+        for(Map.Entry<String, Symbol> entry : another.symbols.entrySet()) {
+            String key = entry.getKey();
+            Symbol value = entry.getValue();
+            this.put(key, value);
         }
     }
 

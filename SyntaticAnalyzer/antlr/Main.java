@@ -15,11 +15,23 @@ import error.*;
 import symbol.*;
 
 public class Main {
+
 	public static void main(String[] args) throws Exception {
+		parse(args, "");
+	}
+
+	public static SymbolTable parse(String[] args, String filepath) throws Exception {
 
 		String inputFile = null;
 		if ( args.length>0 ) {
-			inputFile = args[0];
+			inputFile = filepath + args[0];
+			// filepath +=
+			int endIndex = inputFile.lastIndexOf("/");
+			if (endIndex != -1) {
+        filepath = inputFile.substring(0, endIndex+1);
+    	} else {
+				filepath = "";
+			}
 		}
 
 		InputStream is = System.in;
@@ -49,8 +61,9 @@ public class Main {
 
 		/* Semantic analysis */
         ParseTreeWalker walker = new ParseTreeWalker();
-        AMZSemanticListener semanticListener = new AMZSemanticListener();
+        AMZSemanticListener semanticListener = new AMZSemanticListener(filepath);
         walker.walk(semanticListener, tree);
+				return semanticListener.getSymbolTable();
 
 	}
 
