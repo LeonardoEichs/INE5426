@@ -164,7 +164,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					break;
 				case OBJECT:
 					System.out.print("Erro na linha " + ctx.getStart().getLine() + ": ");
-					System.err.println("Objeto já declarada");
+					System.err.println("Objeto já declarado");
 					break;
 				}
 				return;
