@@ -71,7 +71,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
 		symbolTable = new SymbolTable(null); // Initialize symbol table
-		System.out.println("Symbol table created");
+		// System.out.println("Symbol table created");
 	}
 
 	private String parseStringLiteral(String literalTxt) {
@@ -97,13 +97,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			types.put(ctx, Type.STRING);
 			sizes.put(ctx, -1);
 
-			// String val = ctx.STRING_LITERAL().getText();
-			// val = val.substring(1, val.length()-1)
-			// 	.replace("\\\"", "\"")
-			// 	.replace("\\\\", "\\")
-			// 	.replace("\\r", "\r")
-			// 	.replace("\\n", "\n")
-			// 	.replace("\\t", "\t");
+			// String val = parseStringLiteral(ctx.STRING_LITERAL().getText());;
 
 		} else if (ctx.object_literal() != null) {
 			types.put(ctx, Type.OBJECT);

@@ -25,7 +25,6 @@ public class Main {
 		String inputFile = null;
 		if ( args.length>0 ) {
 			inputFile = filepath + args[0];
-			// filepath +=
 			int endIndex = inputFile.lastIndexOf("/");
 			if (endIndex != -1) {
         filepath = inputFile.substring(0, endIndex+1);
@@ -36,6 +35,7 @@ public class Main {
 
 		InputStream is = System.in;
 		if ( inputFile!=null ) {
+			System.out.println("Compilando arquivo \"" + inputFile + "\"");
 			is = new FileInputStream(inputFile);
 		}
 		ANTLRInputStream input = new ANTLRInputStream(is);
@@ -54,7 +54,7 @@ public class Main {
 
 		/* Parse Tree */
 		ParseTree tree = parser.eval(); // begin parsing at eval rule
-		System.out.println(tree.toStringTree(parser)); // print tree as text
+		// System.out.println(tree.toStringTree(parser)); // print tree as text
 		if (Arrays.asList(args).contains("-gui")) {
 			treeGui(parser, tree);
 		}
