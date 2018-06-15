@@ -5,6 +5,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import symbol.*;
 
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 
 public class AMZSemanticListener extends AMZ_syntBaseListener {
 
@@ -39,15 +42,33 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public SymbolTable symbolTable;
 
+	//code generation
+	private String llcode = "";
+	private boolean compile_error = false;
+	private int counter_it = 0;
+	private ParseTreeProperty<String> intermediateCode = new ParseTreeProperty<>();
+	private ParseTreeProperty<String> intermediateVars = new ParseTreeProperty<>();
+
 	//anotacoes
 	private ParseTreeProperty<Type> types = new ParseTreeProperty<>();
 	private ParseTreeProperty<String> productionNames = new ParseTreeProperty<>();
-	// private ParseTreeProperty<String> id = new ParseTreeProperty<>();
+	private ParseTreeProperty<String> idNames = new ParseTreeProperty<>();
 	private ParseTreeProperty<Integer> sizes = new ParseTreeProperty<>();
 
 	public void enterFunction_block(AMZ_syntParser.Function_blockContext ctx) {
 		symbolTable = new SymbolTable(symbolTable);
 		productionNames.put(ctx, "function_block");
+
+		//codegeneration
+		Type type = Type.getEnumByString(ctx.declaration().type().getText());
+		String typ = ctx.declaration().type().getText();
+		String id = ctx.declaration().ID().getText();
+		System.out.println(typ);
+		if(typ.equals("int")) {
+			  System.out.println(id);
+				String ic = "define i32 @" + id + "() {\n";
+				llcode += ic;
+		}
 	}
 
 	public AMZSemanticListener(String filepath) {
@@ -71,7 +92,51 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	public void enterEval(AMZ_syntParser.EvalContext ctx) {
 		symbolTable = new SymbolTable(null); // Initialize symbol table
+
+		//add primitive function print in SymbolTable
+		String type = Type.INT.toString();
+		Integer size = -1;
+		Integer nParam = 1;
+		ArrayList<String> paramTypes = new ArrayList<>();
+		ArrayList<Integer> paramSizes = new ArrayList<>();
+		paramTypes.add(Type.INT.toString());
+		paramSizes.add(-1);
+
+		Symbol symbol = new FunctionSymbol(type, paramTypes, paramSizes, size);
+		symbolTable.put("print", symbol);
 		// System.out.println("Symbol table created");
+
+		llcode += "@.pstr = private unnamed_addr constant [4 x i8] c\"%u\\0A\\00\"" + "\n" +
+							"@.nstr = private unnamed_addr constant [5 x i8] c\"-%u\\0A\\00\"\n";
+	}
+
+	public void exitEval(AMZ_syntParser.EvalContext ctx) {
+		llcode += "declare i32 @printf(i8*, ...) #1\n" +
+		"define void @printSignedInt(i32 %i) {" + "\n" +
+  	"%t1 = lshr i32 %i, 31" + "\n" +
+    "%isNegative = trunc i32 %t1 to i1" + "\n" +
+    "br i1 %isNegative, label %PrintNegative, label %PrintPositive" + "\n" +
+    "PrintNegative:" + "\n" +
+    "  %t2 = zext i32 %i to i33" + "\n" +
+    "  %t3 = sub i33 4294967296, %t2" + "\n" +
+    "  %rep = trunc i33 %t3 to i32" + "\n" +
+    "  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.nstr, i32 0, i32 0), i32 %rep)" + "\n" +
+    "  ret void" + "\n" +
+    "PrintPositive:" + "\n" +
+    "  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.pstr, i32 0, i32 0), i32 %i)" + "\n" +
+    "  ret void" + "\n" +
+		"}";
+
+		FileWriter file;
+		try {
+			file = new FileWriter(new File("output.ll"));
+			file.write(llcode);
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String parseStringLiteral(String literalTxt) {
@@ -143,6 +208,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		symbol = st.lookup(id);
 
 		types.put(ctx, types.get(ctx.type()));
+		idNames.put(ctx, id);
 
 		Integer size = -1;
 		if (ctx.array_position() != null) {
@@ -225,18 +291,29 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Integer size0 = sizes.get(ctx.declaration());
 		Integer size1 = sizes.get(ctx.expression());
 
-
 		if (size0 != null && size1 != null && !size0.equals(size1)) {
 			System.out.print("Erro na linha " + ctx.getStart().getLine() + ": ");
 			String strSize0 = size0 == -1 ? "Não array" : "Array de tamanho " + size0;
 			String strSize1 = size1 == -1 ? "Não array" : "Array de tamanho " + size1;
 			System.out.println("Atribuição com tamanho incompatível. Recebido: "
 				+ strSize1 + ". Esperava-se: " + strSize0 + '.');
+			compile_error = true;
 		}
 		if (type0 != type1) {
 			System.out.print("Erro na linha " + ctx.getStart().getLine() + ": ");
 			System.out.println("Atribuição com tipo incompatível. Recebido: "
 				+ type1 + ". Esperava-se: " + type0 + '.');
+			compile_error = true;
+		}
+
+		if (compile_error == false) {
+			System.out.println(type0.toString());
+			if (type0 == Type.INT){
+					String var_name = "%" + ctx.declaration().ID().getText();
+					llcode += var_name + " = add i32 0, " + intermediateVars.get(ctx.expression()) + "\n";
+					intermediateVars.put(ctx, var_name);
+			}
+
 		}
 	}
 
@@ -620,6 +697,9 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				return;
 			}
 		}
+		if (compile_error == false) {
+			llcode += "call void @printSignedInt(i32 " + intermediateVars.get(ctx.arguments().expression(0)) + ")\n";
+		}
 	}
 
 	private static boolean isInteger(String str) {
@@ -658,6 +738,18 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 			types.put(ctx, types.get(ctx.value()));
 			size = sizes.get(ctx.value());
+
+			//generationCode
+			if (compile_error == false) {
+				Type type_exp = types.get(ctx.value());
+
+				if (type_exp == Type.INT) {
+					String it_name = "%t_" + counter_it;
+					llcode += it_name + " = add i32 0, " + ctx.value().INTEGER().getText() + "\n";
+					intermediateVars.put(ctx, it_name);
+					counter_it++;
+				}
+			}
 
 
 		} else if (ctx.ID() != null) {
@@ -699,6 +791,13 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			// if (symbol.type != ctx)
 			// System.out.println(ctx.ID());
 
+			//generationCode
+
+			if (compile_error == false) {
+				String it_var = "%" + ctx.ID();
+				intermediateVars.put(ctx, it_var);
+			}
+
 
 		} else if (ctx.function_call() != null) {
 
@@ -725,7 +824,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			size = -1;
 		}
 		sizes.put(ctx, size);
-
 	}
 
 	public void exitObject_element(AMZ_syntParser.Object_elementContext ctx) {
@@ -768,6 +866,9 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 
 	// function_block : declaration LPAREN parameters RPAREN command_block ;
     public void exitFunction_block(AMZ_syntParser.Function_blockContext ctx) {
+			//codegeneration
+			llcode += "}\n";
+
 
     	symbolTable = symbolTable.parent;
     	String type = ctx.declaration().type().getText();
@@ -916,6 +1017,13 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Tipo de retorno incompatível. Recebido: " + returnType
 				+ ". Esperava-se: "  + functionType);
+			compile_error = true;
+		}
+
+		if (compile_error == false) {
+			if (returnType == Type.INT){
+				llcode += "ret i32 " + intermediateVars.get(ctx.expression());
+			}
 		}
 
 	}
