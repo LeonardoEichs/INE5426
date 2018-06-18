@@ -63,10 +63,21 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Type type = Type.getEnumByString(ctx.declaration().type().getText());
 		String typ = ctx.declaration().type().getText();
 		String id = ctx.declaration().ID().getText();
-		System.out.println(typ);
+		Integer nParam = ctx.parameters().declaration().size();
+		//TODO pegar parametros
 		if(typ.equals("int")) {
-			  System.out.println(id);
-				String ic = "define i32 @" + id + "() {\n";
+				String ic = "define i32 @" + id + "(";
+				for(int i = 0; i < nParam; i++) {
+					if(i != 0) {
+						ic += ", ";
+					}
+					String typParam = ctx.parameters().declaration(i).type().getText();
+					String idParam = "%" + ctx.parameters().declaration(i).ID().getText();
+					if(typParam.equals("int")) {
+						ic += "i32 " + idParam;
+					}
+				}
+				ic += ") {\n";
 				llcode += ic;
 		}
 	}
@@ -307,7 +318,6 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 
 		if (compile_error == false) {
-			System.out.println(type0.toString());
 			if (type0 == Type.INT){
 					String var_name = "%" + ctx.declaration().ID().getText();
 					llcode += var_name + " = add i32 0, " + intermediateVars.get(ctx.expression()) + "\n";
@@ -477,6 +487,22 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		Integer size1 = sizes.get(ctx.expression(1));
 		if (requireNotArray(size0, line) && requireNotArray(size1, line)) {
 			sizes.put(ctx, -1);
+		}
+
+		if (compile_error == false) {
+			String id0 = intermediateVars.get(ctx.expression(0));
+			String id1 = intermediateVars.get(ctx.expression(1));
+			String oper = ctx.arithmetic_binary_op_lower_prec().getText();
+			if (type0 == Type.INT && type1 == Type.INT) {
+				String it_name = "%t_" + counter_it;
+				if (oper.equals("+")) {
+					llcode += it_name + " = add i32 " + id0 + ", " + id1 + "\n";
+				} else {
+					llcode += it_name + " = sub i32 " + id0 + ", " + id1 + "\n";
+				}
+				intermediateVars.put(ctx, it_name);
+				counter_it++;
+			}
 		}
 	}
 
@@ -698,7 +724,30 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			}
 		}
 		if (compile_error == false) {
-			llcode += "call void @printSignedInt(i32 " + intermediateVars.get(ctx.arguments().expression(0)) + ")\n";
+			if(id.equals("print")) {
+					llcode += "call void @printSignedInt(i32 " + intermediateVars.get(ctx.arguments().expression(0)) + ")\n";
+			} else {
+					String functionType = ((FunctionSymbol) st.lookup(id)).functionType.toString();
+					if(functionType.equals("int")) {
+						String it_name = "%t_" + counter_it;
+						llcode += it_name + " = call i32 @" + id + "(";
+						intermediateVars.put(ctx, it_name);
+						counter_it++;
+					}
+
+					for (int i = 0; i < callArgSize; i++) {
+						if (i != 0) {
+							llcode += ", ";
+						}
+						String intermedId = intermediateVars.get(ctx.arguments().expression(i));
+						Type intermedType = types.get(ctx.arguments().expression(i));
+
+						if (intermedType == Type.INT) {
+							llcode += "i32 " + intermedId;
+						}
+					}
+					llcode += ")\n";
+			}
 		}
 	}
 
@@ -806,6 +855,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 				Type type = Type.getEnumByString(symbol.valueType.toString());
 				types.put(ctx, type);
 				size = symbol.size;
+			}
+
+			if (compile_error == false) {
+				if (intermediateVars.get(ctx.function_call()) != null) {
+					intermediateVars.put(ctx, intermediateVars.get(ctx.function_call()));
+				}
 			}
 		}
 
