@@ -64,7 +64,7 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		String typ = ctx.declaration().type().getText();
 		String id = ctx.declaration().ID().getText();
 		Integer nParam = ctx.parameters().declaration().size();
-		//TODO pegar parametros
+
 		if(typ.equals("int")) {
 				String ic = "define i32 @" + id + "(";
 				for(int i = 0; i < nParam; i++) {
@@ -532,29 +532,34 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			if (type1 != Type.BOOLEAN) {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Tipos incompatíveis");
+				compile_error = true;
 				return;
 			}
 		} else if (type0 == Type.INT) {
 			if (type1 != Type.INT) {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Tipos incompatíveis");
+				compile_error = true;
 				return;
 			}
 		} else if (type0 == Type.DOUBLE) {
 			if (type1 != Type.DOUBLE) {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Tipos incompatíveis");
+				compile_error = true;
 				return;
 			}
 		} else if (type0 == Type.STRING) {
 			if (type1 != Type.STRING) {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Tipos incompatíveis");
+				compile_error = true;
 				return;
 			}
 		} else {
 			System.out.print("Erro na linha " + line + ": ");
 			System.out.println("Tipo não permitido");
+			compile_error = true;
 			return;
 		}
 		Integer size0 = sizes.get(ctx.expression(0));
@@ -564,6 +569,25 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			sizes.put(ctx, -1);
 		}
 		types.put(ctx, Type.BOOLEAN);
+
+		if (compile_error == false) {
+			String comparison_op = ctx.comparison_op_lower_prec().getText();
+			String var1 = intermediateVars.get(ctx.expression(0));
+			String var2 = intermediateVars.get(ctx.expression(1));
+			String it_name = "%t_" + counter_it;
+			if (comparison_op.equals("==")) {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp eq i32 " + var1 + ", " + var2 + "\n";
+				}
+
+			} else {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp ne i32 " + var1 + ", " + var2 + "\n";
+				}
+			}
+			intermediateVars.put(ctx, it_name);
+			counter_it++;
+		}
 	}
 
 	public void exitExpBinLogicH(AMZ_syntParser.ExpBinLogicHContext ctx) {
@@ -996,6 +1020,33 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 		}
 	}
 
+	public void enterCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+		if (compile_error == false) {
+			AMZ_syntParser.If_blockContext blockCtx = (AMZ_syntParser.If_blockContext) ctx.getParent();
+			if (blockCtx != null) {
+				if (compile_error == false) {
+					String expVar1 = intermediateVars.get(blockCtx.expression(0));
+					String if_label = "%l_" + counter_it;
+					String if_labelX = "l_" + counter_it;
+					counter_it++;
+					String exit_label = "%l_" + counter_it;
+					counter_it++;
+					llcode += "br i1 " + expVar1 + ", label " + if_label + ", label " + exit_label + "\n";
+					llcode += if_labelX + ":\n";
+					intermediateVars.put(ctx, exit_label);
+				}
+			}
+		}
+	}
+
+	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+		if (compile_error == false) {
+			String itVar = intermediateVars.get(ctx);
+			llcode += "br label " + itVar + "\n";
+			llcode += itVar.substring(1, itVar.length()) + ":\n";
+		}
+	}
+
 	public void exitIf_block(AMZ_syntParser.If_blockContext ctx) {
 		int length = ctx.expression().size();
 		for (int i = 0; i < length; i++) {
@@ -1004,12 +1055,12 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 			if (type != Type.BOOLEAN) {
 				System.out.print("Erro na linha " + line + ": ");
 				System.out.println("Tipo incompatível. Recebido: " + type + ". Esperava-se: boolean.");
+				compile_error = true;
 			}
 			Integer size = sizes.get(ctx.expression(i));
 			// TODO: precisa disso?
 			requireNotArray(size, line);
 		}
-
 	}
 
 	public void exitCase_block(AMZ_syntParser.Case_blockContext ctx) {
