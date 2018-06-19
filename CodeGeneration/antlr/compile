@@ -10,4 +10,6 @@ java -Xmx500M -cp "/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr
 cd ..
 javac .generated/AMZ_synt*.java Main.java -d ./.compiled || exit
 clear
-java -cp "./.compiled:$CLASSPATH" Main "$@"
+java -cp "./.compiled:$CLASSPATH" Main "$@" || exit
+clear
+lli output.ll
