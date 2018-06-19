@@ -138,6 +138,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
     "  ret void" + "\n" +
 		"}";
 
+		if (compile_error) {
+			System.exit(1);
+		}
+
 		FileWriter file;
 		try {
 			file = new FileWriter(new File("output.ll"));
