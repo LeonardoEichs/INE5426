@@ -584,9 +584,25 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					llcode += it_name + " = icmp eq i32 " + var1 + ", " + var2 + "\n";
 				}
 
-			} else {
+			}  else if (comparison_op.equals("!=")) {
 				if(type0 == Type.INT) {
 					llcode += it_name + " = icmp ne i32 " + var1 + ", " + var2 + "\n";
+				}
+			} else if (comparison_op.equals("<")) {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp slt i32 " + var1 + ", " + var2 + "\n";
+				}
+			} else if (comparison_op.equals("<=")) {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp sle i32 " + var1 + ", " + var2 + "\n";
+				}
+			} else if (comparison_op.equals(">")) {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp sgt i32 " + var1 + ", " + var2 + "\n";
+				}
+			} else if (comparison_op.equals(">=")) {
+				if(type0 == Type.INT) {
+					llcode += it_name + " = icmp sge i32 " + var1 + ", " + var2 + "\n";
 				}
 			}
 			intermediateVars.put(ctx, it_name);
@@ -1041,24 +1057,50 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					intermediateVars.put(ctx, exit_label);
 				}
 				
-			} else if (blockType.equals("while_block")) {
-				AMZ_syntParser.While_blockContext blockCtx = (AMZ_syntParser.While_blockContext) ctx.getParent();
-				if (blockCtx != null) {
-					if (compile_error == false) {
-					String expVar1 = intermediateVars.get(blockCtx.expression());
-					String while_label = "%l_" + counter_it;
-					String while_labelX = "l_" + counter_it;
-					counter_it++;
-					String exit_label = "%l_" + counter_it;
-					counter_it++;
-					llcode += "br i1 " + expVar1 + ", label " + while_label + ", label " + exit_label + "\n";
-					llcode += while_labelX + ":\n";
-					intermediateVars.put(ctx, exit_label);
-					}
-				}
 			}
+			//   else if (blockType.equals("while_block")) {
+			// 	AMZ_syntParser.While_blockContext blockCtx = (AMZ_syntParser.While_blockContext) ctx.getParent();
+			// 	if (blockCtx != null) {
+			// 		if (compile_error == false) {
+
+			// 			String expVar1 = intermediateVars.get(blockCtx.expression());
+			// 			String condition_label = "%l_" + counter_it;
+			// 			String condition_labelX = "l_" + counter_it;
+			// 			llcode += "br label" + condition_label  + "\n";
+			// 			llcode += condition_labelX + ":\n";
+
+			// 			counter_it++;
+			// 			String while_label = "%l_" + counter_it;
+			// 			String while_labelX = "l_" + counter_it;
+
+			// 			counter_it++;
+			// 			String exit_label = "%l_" + counter_it;
+			// 			String exit_labelX = "%l_" + counter_it;
+						
+			// 			counter_it++;
+
+
+			// 			llcode += "br label" + condition_label + "\n";
+			// 			llcode += "%t_" + counter_it + " = icmp ne i32 " + expVar1 + ", 0\n";
+
+			// 			llcode += "br i1 %t_" + counter_it  + ", label " + while_label + ", label " + exit_label + "\n";
+
+			// 			llcode += while_labelX + ":\n";
+
+			// 			llcode += "br label" + condition_label + "\n";
+
+			// 			llcode += exit_labelX + ":\n";
+					
+			// 			intermediateVars.put(ctx, exit_label);
+			// 			counter_it++;
+
+			// 		}
+			// 	}
+			// }
 		}
 	}
+
+    
 
 	public void exitCommand_block(AMZ_syntParser.Command_blockContext ctx) {
 		if (compile_error == false) {

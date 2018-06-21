@@ -13,7 +13,7 @@ define i32 @main() #0 {
 
 ; <label>:3:                                      ; preds = %6, %0
   %4 = load i32, i32* %2, align 4
-  %5 = icmp slt i32 %4, 20
+  %5 = icmp sgt i32 %4, 20
   br i1 %5, label %6, label %9
 
 ; <label>:6:                                      ; preds = %3
