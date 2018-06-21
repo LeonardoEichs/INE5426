@@ -1025,9 +1025,10 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 	}
 
 	public void enterCommand_block(AMZ_syntParser.Command_blockContext ctx) {
+		String blockType = productionNames.get(ctx.getParent());
 		if (compile_error == false) {
-			AMZ_syntParser.If_blockContext blockCtx = (AMZ_syntParser.If_blockContext) ctx.getParent();
-			if (blockCtx != null) {
+			if (blockType.equals("if_block")) {
+				AMZ_syntParser.If_blockContext blockCtx = (AMZ_syntParser.If_blockContext) ctx.getParent();
 				if (compile_error == false) {
 					String expVar1 = intermediateVars.get(blockCtx.expression(0));
 					String if_label = "%l_" + counter_it;
@@ -1038,6 +1039,22 @@ public class AMZSemanticListener extends AMZ_syntBaseListener {
 					llcode += "br i1 " + expVar1 + ", label " + if_label + ", label " + exit_label + "\n";
 					llcode += if_labelX + ":\n";
 					intermediateVars.put(ctx, exit_label);
+				}
+				
+			} else if (blockType.equals("while_block")) {
+				AMZ_syntParser.While_blockContext blockCtx = (AMZ_syntParser.While_blockContext) ctx.getParent();
+				if (blockCtx != null) {
+					if (compile_error == false) {
+					String expVar1 = intermediateVars.get(blockCtx.expression());
+					String while_label = "%l_" + counter_it;
+					String while_labelX = "l_" + counter_it;
+					counter_it++;
+					String exit_label = "%l_" + counter_it;
+					counter_it++;
+					llcode += "br i1 " + expVar1 + ", label " + while_label + ", label " + exit_label + "\n";
+					llcode += while_labelX + ":\n";
+					intermediateVars.put(ctx, exit_label);
+					}
 				}
 			}
 		}
